@@ -1,0 +1,56 @@
+swagger: '2.0'
+info:
+  title: DASPANEL API
+  version: "1.0"
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /status:
+    get:
+      tags: [API Server]
+      operationId: modules.base.api.status
+      summary: Get api server status
+      responses:
+        200:
+          description: Api without issues
+        404:
+          description: Api with issues
+  /services:
+    get:
+      tags: [API Server]
+      operationId: modules.base.api.services
+      summary: Get services endpoints in API server
+      responses:
+        200:
+          description: Return services list endpoint
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Services'
+
+definitions:
+  Services:
+    type: object
+    properties:
+      service:
+        type: string
+        description: Service name
+        example: "databases"
+        readOnly: true
+      urls:
+        type: object
+        description: Url's endpoint's
+        properties:
+          endpoint:
+            type: string
+            description: Endpoint address
+            example: "/1.0/databases"
+            readOnly: true
+          endpoint_doc:
+            type: string
+            description: Endpoint API doc
+            example: "/1.0/databases/ui"
+            minLength: 1
+

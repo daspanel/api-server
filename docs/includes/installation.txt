@@ -1,0 +1,42 @@
+.. _installation:
+
+Installation
+============
+
+You can install api_server either via the Python Package Index (PyPI)
+or from source.
+
+To install using `pip`,::
+
+    $ pip install -U api_server
+
+.. _installing-from-source:
+
+Downloading and installing from source
+--------------------------------------
+
+Download the latest version of api_server from
+http://pypi.python.org/pypi/api_server
+
+You can install it by doing the following,::
+
+    $ tar xvfz api_server-0.0.0.tar.gz
+    $ cd api_server-0.0.0
+    $ python setup.py build
+    # python setup.py install
+
+The last command must be executed as a privileged user if
+you are not currently using a virtualenv.
+
+.. _installing-from-git:
+
+Using the development version
+-----------------------------
+
+With pip
+~~~~~~~~
+
+You can install the latest snapshot of api_server using the following
+pip command::
+
+    $ pip install https://github.com/daspanel/api-server/zipball/master#egg=api_server

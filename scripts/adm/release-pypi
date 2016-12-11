@@ -1,0 +1,8 @@
+#!/bin/sh
+
+set -e
+
+#python setup.py sdist bdist_wheel upload --sign --identity="admindaspanel"
+#python setup.py register bdist_wheel upload --sign --identity="admindaspanel"
+
+python setup.py register bdist_wheel upload

@@ -1,0 +1,138 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""API Server
+
+Daspanel API server
+
+ :copyright: (c) 2016, Abner G Jacobsen.
+             All rights reserved.
+ :license:   GNU General Public License v3, see LICENSE for more details.
+
+"""
+
+from __future__ import absolute_import, division, print_function
+from __about__ import *
+
+import click
+import os
+import multiprocessing
+import json
+from urlparse import urlparse
+
+#https://bitbucket.org/youngking/flask-actions/src/381d6eea3e781e70d6e43bfab939fef390a6ed88/flaskext/actions/server_actions.py?at=default&fileviewer=file-view-default
+#http://damianzaremba.co.uk/2012/08/running-a-wsgi-app-via-gunicorn-from-python/
+
+from gunicorn.app.base import Application
+from gunicorn import util
+
+from gunicorn_conf import DEF_GUNICORN_CFG
+
+class FlaskServer(Application):
+    def __init__(self, app='app:app', options={}):
+        self.run_app = app
+        self.server_options = options
+        super(FlaskServer, self).__init__()
+        
+    def init(self, parser, opts, args):
+        mycfg = {}
+        for k, v in self.server_options.items():
+            if k.lower() in self.cfg.settings and v is not None:
+                mycfg[k.lower()] = v
+        return mycfg
+
+    def load(self):
+        return util.import_app(self.run_app)
+
+
+@click.command()
+@click.option(
+    '--bind',
+    default=None,
+    help='Where to listen on, GUNICORN default is 5000'
+)
+@click.option(
+    '--user',
+    default=None,
+    help='User ID of the daemon'
+)
+@click.option(
+    '--group',
+    default=None,
+    help='Group ID of the daemon'
+)
+@click.option(
+    '--log-level',
+    default='info',
+    help='Log mode'
+)
+@click.argument('app_module')
+@click.argument('app_name')
+def main(app_module, app_name, bind, user, group, log_level='info'):
+    """This script start's python app as a WSGI server using GUNICORN."""
+    debug = False
+    if log_level == 'debug':
+        debug = True
+
+    # Transform ENV variables in config variables for gunicorn
+    server_options = DEF_GUNICORN_CFG
+
+    if debug:
+        click.secho(
+            json.dumps({
+                'app': app_name,
+                'server_options_default': server_options,
+            }),
+        fg='blue')
+
+    for k,v in os.environ.items():
+        if k.startswith("GUNICORN_"):
+            key = k.split('_', 1)[1].lower()
+            server_options[key] = v
+
+    if debug:
+        click.secho(
+            json.dumps({
+                'app': app_name,
+                'server_options_env': server_options,
+            }),
+        fg='yellow')
+
+    # Command line parameters have precedence over ENV variables
+    if bind is not None:
+        server_options['bind'] = bind
+    if user is not None:
+        server_options['user'] = user
+    if group is not None:
+        server_options['group'] = group
+
+    # If log_level == debug
+    if debug:
+        server_options['preload_app'] = False
+        server_options['reload'] = True
+        server_options['loglevel'] = 'debug'
+
+    if debug:
+        click.secho(
+            json.dumps({
+                'app': app_name,
+                'server_options_running': server_options,
+            }),
+        fg='green')
+
+    click.secho('')
+    click.secho('SERVER INFO', fg='green')
+    click.secho('    Python module: {0}'.format(app_module))
+    click.secho('    App name     : {0}'.format(app_name))
+    click.secho('    Bind address : {0}'.format(server_options['bind']))
+    if 'user' in server_options:
+        click.secho('    User         : {0}'.format(server_options['user']))
+    if 'group' in server_options:
+        click.secho('    Group        : {0}'.format(server_options['group']))
+    click.secho('    Debug Active : {0}'.format(debug))
+    click.secho('')
+
+    FlaskServer(app=app_module, options=server_options).run()
+
+if __name__ == '__main__':
+    main()
+

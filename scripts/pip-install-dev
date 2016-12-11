@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+PIP_DEV_PACKAGES="-r requirements/dev.txt -r requirements/default.txt -r requirements/docs.txt -r requirements/pkgutils.txt -r requirements/test.txt -r requirements/test-ci.txt"
+
+#cd $(git rev-parse --show-cdup)
+
+pip install $PIP_DEV_PACKAGES
+

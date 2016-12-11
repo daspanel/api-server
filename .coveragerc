@@ -1,0 +1,11 @@
+[run]
+branch = 1
+cover_pylib = 0
+include = *api_server/*
+omit = api_server.tests.*
+
+[report]
+omit =
+    */python?.?/*
+    */site-packages/*
+    */pypy/*

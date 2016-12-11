@@ -1,0 +1,1163 @@
+# https://raw.githubusercontent.com/adnan-kamili/swagger-response-template/master/swagger.yaml
+swagger: '2.0'
+info:
+    version: "1.0.0"
+    title: DASPANEL Sites API
+    description: |
+
+        Site related API methods.
+
+        The first version of the Daspanel Sites API is an exciting step forward 
+        towards making an hosting control panel using Docker. We created it so 
+        that you can create any site, plain or using PHP, in your local machine 
+        and when ready easy deploy it on an public server exactly as you see it 
+        in the development machine.
+
+        Build something great!
+
+    version: "1.0"
+    termsOfService: http://daspanel.com/terms/
+    contact:
+        name: Daspanel API team
+        email: admin@daspanel.com
+        url: http://daspanel.com
+    license:
+        name: GPL-3
+        url: https://opensource.org/licenses/GPL-3.0
+# array of all schemes that your API supports
+schemes:
+    - http
+    - https
+consumes:
+    - application/json
+produces:
+    - application/json
+
+security:
+    - internalApiKey: []
+
+securityDefinitions:
+    internalApiKey:
+        type: apiKey
+        in: header
+        name: X-Api-Key
+
+#tags:
+#    - name: Databases
+#      description: |
+#          Relationships are expressed using the following terms:
+#
+#          **outgoing_status**: Your relationship to the user. Can be "follows",
+#            "requested", "none".
+#          **incoming_status**: A user's relationship to you. Can be "followed_by",
+#            "requested_by", "blocked_by_you", "none".
+#    - name: Actions
+#      description: |
+#            At this time, uploading via the API is not possible. We made a conscious
+#            choice not to add this for the following reasons:
+#
+#            * Instagram is about your life on the go – we hope to encourage photos
+#            from within the app.
+#            * We want to fight spam & low quality photos. Once we allow uploading
+#            from other sources, it's harder to control what comes into the Instagram
+#            ecosystem. All this being said, we're working on ways to ensure users
+#            have a consistent and high-quality experience on our platform.
+paths:
+    /:
+        post:
+            tags: [Sites]
+            operationId: modules.sites.api.new_item
+            summary: Insert new site
+            description: |
+                This endpoint is for create an new site.
+            parameters:
+                - name: bdata
+                  in: body
+                  required: true
+                  schema:
+                        $ref: '#/definitions/NewItem'
+            responses:
+                201:
+                   description: Return new site info
+                   schema:
+                        $ref: '#/definitions/Item'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                       $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
+        get:
+            tags: [Sites]
+            operationId: modules.sites.api.get_all
+            summary: Get all sites
+            description: |
+                The sites endpoint returns information about the *Uber* products
+                offered at a given location. The response includes the display name
+                and other details about each product, and lists the products in the
+                proper display order.
+            responses:
+                200:
+                    description: List of sites
+                    schema:
+                        $ref: '#/definitions/Items'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /{cuid}:
+        get:
+            tags: [Sites]
+            operationId: modules.sites.api.get_item
+            summary: Get a single database
+            parameters:
+                - $ref: '#/parameters/cuid'
+            responses:
+                200:
+                   description: Return site
+                   schema:
+                        $ref: '#/definitions/Item'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        put:
+            tags: [Sites]
+            operationId: modules.sites.api.edit_item
+            summary: Edit database
+            description: |
+                This endpoint is for edit existing database.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - name: bdata
+                  in: body
+                  required: true
+                  schema:
+                        $ref: '#/definitions/EditItem'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        delete:
+            tags: [Sites]
+            operationId: modules.sites.api.delete_item
+            summary: Delete database
+            description: |
+                This endpoint is for delete existing database.
+            parameters:
+                - $ref: '#/parameters/cuid'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /service/{servertype}/genconfig/{cuid}:
+        get:
+            tags: [Servers]
+            operationId: modules.sites.serviceapi.httpserver_gencfg
+            summary: Generate config files for site server app
+            description: |
+                This endpoint is for generate service app config of a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/servertype'
+            responses:
+                200:
+                    description: Server config.
+                    schema:
+                        $ref: '#/definitions/RedirectsItems'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /service/{servertype}/activate/{cuid}:
+        get:
+            tags: [Servers]
+            operationId: modules.sites.serviceapi.httpserver_activate
+            summary: Activate site in HTTP server app
+            description: |
+                This activate site in HTTP server app.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/servertype'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /service/{servertype}/deactivate/{cuid}:
+        get:
+            tags: [Servers]
+            operationId: modules.sites.serviceapi.httpserver_deactivate
+            summary: Deactivate site in HTTP server app
+            description: |
+                This deactivate site in HTTP server app.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/servertype'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /service/{servertype}/reload:
+        get:
+            tags: [Servers]
+            operationId: modules.sites.serviceapi.httpserver_reload
+            summary: Reload HTTP server app configuration
+            description: |
+                This reload HTTP server app configuration.
+            parameters:
+                - $ref: '#/parameters/servertype'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
+    /{cuid}/redirects:
+        get:
+            tags: [SiteRedirects]
+            operationId: modules.sites.api.redirects_get_all
+            summary: All redirects of a site
+            description: |
+                This endpoint is for get all redirects of a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+            responses:
+                200:
+                    description: Return all avaiable redirects of a site.
+                    schema:
+                        $ref: '#/definitions/RedirectsItems'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
+        post:
+            tags: [SiteRedirects]
+            operationId: modules.sites.api.redirects_new_item
+            summary: Add new site redirect
+            description: |
+                This endpoint is for add a new redirect for a existing site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - name: bdata
+                  in: body
+                  required: true
+                  description: New site redirect info.
+                  schema:
+                        $ref: '#/definitions/NewRedirectItem'
+            responses:
+                201:
+                   description: Return new site redirect info
+                   schema:
+                        $ref: '#/definitions/SiteRedirect'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /{cuid}/redirects/{rcuid}:
+        get:
+            tags: [SiteRedirects]
+            operationId: modules.sites.api.redirects_get_item
+            summary: Get redirect of a site
+            description: |
+                This endpoint is for get specific redirect of a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/rcuid'
+            responses:
+                200:
+                    description: Return specific redirect of a site.
+                    schema:
+                        $ref: '#/definitions/SiteRedirect'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        delete:
+            tags: [SiteRedirects]
+            operationId: modules.sites.api.redirects_delete_item
+            summary: Delete redirect of a site
+            description: |
+                This endpoint is for delete specific redirect off a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/rcuid'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        put:
+            tags: [SiteRedirects]
+            operationId: modules.sites.api.redirects_edit_item
+            summary: Update redirect of a site
+            description: |
+                This endpoint is for update specific redirect of a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/rcuid'
+                - name: bdata
+                  in: body
+                  required: true
+                  description: Update site version info.
+                  schema:
+                        $ref: '#/definitions/NewRedirectItem'
+            responses:
+                200:
+                   description: Return updated site redirect info
+                   schema:
+                        $ref: '#/definitions/SiteRedirect'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
+
+    /{cuid}/setdefaultversion/{vcuid}:
+        put:
+            tags: [Sites]
+            operationId: modules.sites.api.versions_activate
+            summary: Set version as default for the site
+            description: |
+                This endpoint is for activate specific version as default for the site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/vcuid'
+            responses:
+                200:
+                    description: Return info of a site.
+                    schema:
+                        $ref: '#/definitions/Item'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /{cuid}/cloneversion/{vcuid}:
+        get:
+            tags: [Sites]
+            operationId: modules.sites.api.versions_clone
+            summary: Clone site version
+            description: |
+                This endpoint is for clone and copy qa site version.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/vcuid'
+            responses:
+                200:
+                    description: Return info of a site version.
+                    schema:
+                        $ref: '#/definitions/SiteVersion'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /{cuid}/versions:
+        post:
+            tags: [SiteVersions]
+            operationId: modules.sites.api.versions_new_item
+            summary: Add new site version
+            description: |
+                This endpoint is for add a new version for a existing site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - name: bdata
+                  in: body
+                  required: false
+                  description: New site version info.
+                  schema:
+                        $ref: '#/definitions/NewVersionItem'
+            responses:
+                201:
+                   description: Return new site version info
+                   schema:
+                        $ref: '#/definitions/SiteVersion'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        get:
+            tags: [SiteVersions]
+            operationId: modules.sites.api.versions_get_all
+            summary: All versions of a site
+            description: |
+                This endpoint is for get all versions off a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+            responses:
+                200:
+                    description: Return all avaiable versions of a site.
+                    schema:
+                        $ref: '#/definitions/VersionsItems'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /{cuid}/versions/{vcuid}:
+        get:
+            tags: [SiteVersions]
+            operationId: modules.sites.api.versions_get_item
+            summary: Get version of a site
+            description: |
+                This endpoint is for get specific version off a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/vcuid'
+            responses:
+                200:
+                    description: Return specific version of a site.
+                    schema:
+                        $ref: '#/definitions/SiteVersion'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        delete:
+            tags: [SiteVersions]
+            operationId: modules.sites.api.versions_delete_item
+            summary: Delete version of a site
+            description: |
+                This endpoint is for delete specific version off a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/vcuid'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        put:
+            tags: [SiteVersions]
+            operationId: modules.sites.api.versions_edit_item
+            summary: Update version of a site
+            description: |
+                This endpoint is for update specific version off a site.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/vcuid'
+                - name: bdata
+                  in: body
+                  required: true
+                  description: Update site version info.
+                  schema:
+                        $ref: '#/definitions/NewVersionItem'
+            responses:
+                200:
+                   description: Return updated site version info
+                   schema:
+                        $ref: '#/definitions/SiteVersion'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
+
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+#securityDefinitions:
+#    oauth:
+#        type: oauth2
+#        flow: implicit
+#        authorizationUrl: https://instagram.com/oauth/authorize/?client_id=CLIENT-ID&redirect_uri=REDIRECT-URI&response_type=token
+#        scopes:
+#            basic: |
+#                to read any and all data related to a user (e.g. following/followed-by
+#                lists, photos, etc.) (granted by default)
+#            comments: to create or delete comments on a user’s behalf
+#            relationships: to follow and unfollow users on a user’s behalf
+#            likes: to like and unlike items on a user’s behalf
+#    api_key:
+#        type: apiKey
+#        in: header
+#        name: X-Api-Key
+#security:
+#    - oauth:
+#        - basic
+#        - comments
+#        - relationships
+#        - likes
+#    - key: []
+
+
+#securityDefinitions:
+#    yapi_key:
+#        type: apiKey
+#        name: xapi_key
+#        in: header
+#    petstore_auth:
+#        type: oauth2
+#        authorizationUrl: http://petstore.swagger.io/api/oauth/dialog
+#        flow: implicit
+#        scopes:
+#            write_pets: modify pets in your account
+#            read_pets: read your pets
+
+parameters:
+    servertype:
+        name: servertype
+        description: "Daspanel service server type, like: nginx"
+        in: path
+        type: string
+        required: true
+        minLength: 1
+        maxLength: 32
+    vcuid:
+        name: vcuid
+        description: Site version universal unique identifier
+        in: path
+        type: string
+        required: true
+        pattern: "^[a-zA-Z0-9-]+$"
+    rcuid:
+        name: rcuid
+        description: Site redirect universal unique identifier
+        in: path
+        type: string
+        required: true
+        pattern: "^[a-zA-Z0-9-]+$"
+
+    cuid:
+        name: cuid
+        description: Item Universal unique identifier
+        in: path
+        type: string
+        required: true
+        pattern: "^[a-zA-Z0-9-]+$"
+    page:
+        name: page
+        in: query
+        description: Current page number
+        required: false
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    limit:
+        name: limit
+        in: query
+        description: Limits the number of returned items
+        required: false
+        type: integer
+        format: int32
+        default: 10
+        minimum: 10
+        maximum: 100
+        multipleOf: 10
+    item:
+        name: item
+        in: body
+        description: An item
+        schema:
+            $ref: "#/definitions/Item"
+
+
+# define reusable definitions:
+definitions:
+    ChgPwd:
+        type: object
+        properties:
+            password:
+                type: string
+                description: New database password
+                example: "#some2019good@d#"
+                minLength: 8
+                maxLength: 16
+    EditItem:
+        type: object
+        required:
+            - sitetype
+            - sitedescription
+            - runtime
+            - urlprefix
+        properties:
+            sitetype:
+                type: string
+                description: Site type
+                example: "wordpress-4.5"
+                minLength: 1
+                maxLength: 64
+            sitedescription:
+                type: string
+                description: Site name
+                example: "My new site"
+                minLength: 1
+                maxLength: 255
+            runtime:
+                type: string
+                description: Runtime/interpreter used in the site
+                example: "php56"
+                minLength: 1
+                maxLength: 64
+            urlprefix:
+                type: string
+                description: Url prefix for the site
+                example: "sitedev001"
+                minLength: 1
+                maxLength: 255
+    NewVersionItem:
+        type: object
+        required:
+            - description
+            - tag
+        properties:
+            description:
+                type: string
+                description: Version name
+                example: "Version name"
+                minLength: 1
+                maxLength: 255
+            tag:
+                type: string
+                description: Version tag
+                example: "0.1.1"
+                minLength: 1
+                maxLength: 255
+    NewRedirectItem:
+        type: object
+        required:
+            - hosturl
+            - domain
+            - ssl
+            - sslcert
+        properties:
+            hosturl:
+                type: string
+                description: Redirect host
+                example: "www"
+                minLength: 1
+                maxLength: 255
+            domain:
+                type: string
+                description: Domain of the redirect
+                example: "mydomain.com"
+                minLength: 1
+                maxLength: 255
+            ssl:
+                type: boolean
+                description: Redirect had SSL cert
+            sslcert:
+                type: string
+                description: Directory of SSL cert
+                example: "data/cit3gxhqh00007aruv60es3XX/certs/siteuuid-sdlkslkj/certuuid-09sdhsdojhsd"
+                minLength: 1
+                maxLength: 255
+
+    NewItem:
+        type: object
+        required:
+            - sitetype
+            - sitedescription
+            - runtime
+        properties:
+            sitetype:
+                type: string
+                description: Site type
+                example: "wordpress-4.5"
+                minLength: 1
+                maxLength: 64
+            sitedescription:
+                type: string
+                description: Site name
+                example: "My new site"
+                minLength: 1
+                maxLength: 255
+            runtime:
+                type: string
+                description: Runtime/interpreter used in the site
+                example: "php56"
+                minLength: 1
+                maxLength: 64
+    Item:
+        type: object
+        required:
+            - sitetype
+            - runtime
+            - sitedescription
+            - urlprefix
+        properties:
+            _created_at:
+                type: string
+                format: date-time
+                description: Creation time
+                example: "2016-07-25T13:20:41"
+                readOnly: true
+            _last_updated:
+                type: string
+                format: date-time
+                description: Last update time
+                example: "2016-07-25T13:20:41"
+                readOnly: true
+            _cuid:
+                type: string
+                description: Universal unique id of the database
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+            sitetype:
+                type: string
+                description: Site type
+                example: "wordpress-4.5"
+                minLength: 1
+                maxLength: 64
+            sitedescription:
+                type: string
+                description: Site name
+                example: "My new site"
+                minLength: 1
+                maxLength: 255
+            runtime:
+                type: string
+                description: Runtime/interpreter used in the site
+                example: "php56"
+                minLength: 1
+                maxLength: 64
+            urlprefix:
+                type: string
+                description: Url prefix for the site
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 1
+                maxLength: 255
+            versions:
+                type: array
+                items:
+                    $ref: '#/definitions/SiteVersion'
+            redirects:
+                type: array
+                items:
+                    $ref: '#/definitions/SiteRedirect'
+            active_version:
+                type: string
+                description: Active version of the site
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+            active_dir:
+                type: string
+                description: Current version directory used by site
+                example: "data/cit3gxhqh00007aruv60es3XX/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
+                minLength: 1
+                maxLength: 255
+                readOnly: true
+    Items:
+        type: array
+        items:
+            $ref: '#/definitions/Item'
+
+    VersionsItems:
+        type: array
+        items:
+            $ref: '#/definitions/SiteVersion'
+
+    SiteVersion:
+        type: object
+        properties:
+            description:
+                type: string
+                description: Version name
+                example: "Initial version"
+                minLength: 1
+                maxLength: 255
+            tag:
+                type: string
+                description: Version tag
+                example: "initial"
+                minLength: 1
+                maxLength: 255
+            date:
+                type: string
+                format: date-time
+                description: Date of the version
+                example: "2016-07-25T13:20:41"
+                readOnly: true
+            directory:
+                type: string
+                description: Directory of the Version
+                example: "data/cit3gxhqh00007aruv60es3XX/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
+                minLength: 1
+                maxLength: 255
+            _cuid:
+                type: string
+                description: Universal unique id of the site version
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+
+    RedirectsItems:
+        type: array
+        items:
+            $ref: '#/definitions/SiteRedirect'
+
+    SiteRedirect:
+        type: object
+        properties:
+            hosturl:
+                type: string
+                description: Redirect host
+                example: "www"
+                minLength: 1
+                maxLength: 255
+            domain:
+                type: string
+                description: Domain of the redirect
+                example: "mydomain.com"
+                minLength: 1
+                maxLength: 255
+            ssl:
+                type: boolean
+                description: Redirect had SSL cert
+            sslcert:
+                type: string
+                description: Directory of SSL cert
+                example: "data/cit3gxhqh00007aruv60es3XX/certs/siteuuid-sdlkslkj/certuuid-09sdhsdojhsd"
+                minLength: 1
+                maxLength: 255
+            _cuid:
+                type: string
+                description: Universal unique id of the redirect
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+
+    Message:
+        type: object
+        required:
+            - status
+            - type
+            - title
+            - detail
+        properties:
+            status:
+                description: HTTP status code
+                type: integer
+                format: int32
+                readOnly: true
+            type:
+                description: Url where the probem is documented
+                type: string
+                format: url
+                readOnly: true
+            title:
+                description: Title of the problem
+                type: string
+                readOnly: true
+            detail:
+                description: Details about the problem
+                type: string
+                readOnly: true
+    NewPassword:
+        type: object
+        properties:
+            password:
+                type: string
+    UrlPrefix:
+        type: object
+        properties:
+            urlprefix:
+                type: string
+    Error:
+        type: object
+        properties:
+            status:
+                type: integer
+                format: int32
+            type:
+                type: string
+                format: url
+            title:
+                type: string
+            detail:
+                type: string
+    Errors:
+        type: array
+        items:
+            $ref: '#/definitions/Error'
+
+    ValidationError:
+        type: object
+        properties:
+            message:
+                type: string
+            errors:
+                $ref: '#/definitions/Errors'
+
+
+
+
+# define reusable responses:
+responses:
+    Success:
+        description: Success
+    SuccessMessage:
+        description: Success
+        schema:
+            $ref: '#/definitions/Message'
+    SuccessPassword:
+        description: Success with new password generated
+        schema:
+            $ref: '#/definitions/NewPassword'
+    SuccessUrlprefix:
+        description: Success with new url prefix for the site
+        schema:
+            $ref: '#/definitions/UrlPrefix'
+
+    400BadRequest:
+        description: The request was invalid or cannot be otherwise served.
+        schema:
+            $ref: '#/definitions/Message'
+    401Unauthorized:
+        description: Authentication credentials were missing or incorrect.
+        schema:
+            $ref: '#/definitions/Message'
+    403Forbidden:
+        description: The request is understood, but it has been refused or access is not allowed.
+        schema:
+            $ref: '#/definitions/Message'
+    404NotFound:
+        description: The URI requested is invalid or the resource requested does not exists. 
+        schema:
+            $ref: '#/definitions/Message'
+    429TooManyRequests:
+        description: The request cannot be served due to the application’s rate limit having been exhausted for the resource. 
+        schema:
+            $ref: '#/definitions/Message'
+    500InternalServerError:
+        description: Something is broken.
+        schema:
+            $ref: '#/definitions/Message'
+    503ServiceUnavailable:
+        description: The server is up, but overloaded with requests. Try again later. 
+        schema:
+            $ref: '#/definitions/Message'
+

@@ -1,0 +1,602 @@
+# https://raw.githubusercontent.com/adnan-kamili/swagger-response-template/master/swagger.yaml
+swagger: '2.0'
+info:
+    title: DASPANEL Databases API
+    description: |
+        Database related API methods.
+
+        The first version of the Instagram API is an exciting step forward towards
+        making it easier for users to have open access to their data. We created it
+        so that you can surface the amazing content Instagram users share every
+        second, in fun and innovative ways.
+
+        Build something great!
+
+        Once you've
+        [registered your client](http://instagram.com/developer/register/) it's easy
+        to start requesting data from Instagram.
+
+        All endpoints are only accessible via https and are located at
+        `api.instagram.com`. For instance: you can grab the most popular photos at
+        the moment by accessing the following URL with your client ID
+        (replace CLIENT-ID with your own):
+        ```
+          https://api.instagram.com/v1/media/popular?client_id=CLIENT-ID
+        ```
+        You're best off using an access_token for the authenticated user for each
+        endpoint, though many endpoints don't require it.
+        In some cases an access_token will give you more access to information, and
+        in all cases, it means that you are operating under a per-access_token limit
+        vs. the same limit for your single client_id.
+
+
+        ## Limits
+        Be nice. If you're sending too many requests too quickly, we'll send back a
+        `503` error code (server unavailable).
+        You are limited to 5000 requests per hour per `access_token` or `client_id`
+        overall. Practically, this means you should (when possible) authenticate
+        users so that limits are well outside the reach of a given user.
+
+        ## Deleting Objects
+        We do our best to have all our URLs be
+        [RESTful](http://en.wikipedia.org/wiki/Representational_state_transfer).
+        Every endpoint (URL) may support one of four different http verbs. GET
+        requests fetch information about an object, POST requests create objects,
+        PUT requests update objects, and finally DELETE requests will delete
+        objects.
+
+        Since many old browsers don't support PUT or DELETE, we've made it easy to
+        fake PUTs and DELETEs. All you have to do is do a POST with _method=PUT or
+        _method=DELETE as a parameter and we will treat it as if you used PUT or
+        DELETE respectively.
+
+        ## Structure
+
+        ### The Envelope
+        Every response is contained by an envelope. That is, each response has a
+        predictable set of keys with which you can expect to interact:
+        ```json
+        {
+            "meta": {
+                "code": 200
+            },
+            "data": {
+                ...
+            },
+            "pagination": {
+                "next_url": "...",
+                "next_max_id": "13872296"
+            }
+        }
+        ```
+
+        #### META
+        The meta key is used to communicate extra information about the response to
+        the developer. If all goes well, you'll only ever see a code key with value
+        200. However, sometimes things go wrong, and in that case you might see a
+        response like:
+        ```json
+        {
+            "meta": {
+                "error_type": "OAuthException",
+                "code": 400,
+                "error_message": "..."
+            }
+        }
+        ```
+
+        #### DATA
+        The data key is the meat of the response. It may be a list or dictionary,
+        but either way this is where you'll find the data you requested.
+        #### PAGINATION
+        Sometimes you just can't get enough. For this reason, we've provided a
+        convenient way to access more data in any request for sequential data.
+        Simply call the url in the next_url parameter and we'll respond with the
+        next set of data.
+        ```json
+        {
+            ...
+            "pagination": {
+                "next_url": "https://api.instagram.com/v1/tags/puppy/media/recent?access_token=fb2e77d.47a0479900504cb3ab4a1f626d174d2d&max_id=13872296",
+                "next_max_id": "13872296"
+            }
+        }
+        ```
+        On views where pagination is present, we also support the "count" parameter.
+        Simply set this to the number of items you'd like to receive. Note that the
+        default values should be fine for most applications - but if you decide to
+        increase this number there is a maximum value defined on each endpoint.
+
+        ### JSONP
+        If you're writing an AJAX application, and you'd like to wrap our response
+        with a callback, all you have to do is specify a callback parameter with
+        any API call:
+        ```
+        https://api.instagram.com/v1/tags/coffee/media/recent?access_token=fb2e77d.47a0479900504cb3ab4a1f626d174d2d&callback=callbackFunction
+        ```
+        Would respond with:
+        ```js
+        callbackFunction({
+            ...
+        });
+        ```    
+    version: "1.0"
+    termsOfService: http://helloreverb.com/terms/
+    contact:
+        name: Swagger API team
+        email: foo@example.com
+        url: http://swagger.io
+    license:
+        name: MIT
+        url: http://opensource.org/licenses/MIT
+# array of all schemes that your API supports
+schemes:
+    - http
+    - https
+consumes:
+    - application/json
+produces:
+    - application/json
+
+
+#tags:
+#    - name: Databases
+#      description: |
+#          Relationships are expressed using the following terms:
+#
+#          **outgoing_status**: Your relationship to the user. Can be "follows",
+#            "requested", "none".
+#          **incoming_status**: A user's relationship to you. Can be "followed_by",
+#            "requested_by", "blocked_by_you", "none".
+#    - name: Actions
+#      description: |
+#            At this time, uploading via the API is not possible. We made a conscious
+#            choice not to add this for the following reasons:
+#
+#            * Instagram is about your life on the go – we hope to encourage photos
+#            from within the app.
+#            * We want to fight spam & low quality photos. Once we allow uploading
+#            from other sources, it's harder to control what comes into the Instagram
+#            ecosystem. All this being said, we're working on ways to ensure users
+#            have a consistent and high-quality experience on our platform.
+paths:
+    /:
+        post:
+            tags: [Databases]
+            operationId: modules.databases.api.new_item
+            summary: Insert new database
+            description: |
+                This endpoint is for create an new database.
+            parameters:
+                - $ref: '#/parameters/api_key'
+                - name: bdata
+                  in: body
+                  required: true
+                  schema:
+                        $ref: '#/definitions/NewItem'
+            responses:
+                201:
+                    $ref: '#/responses/SuccessPassword'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                       $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
+        get:
+            tags: [Databases]
+            operationId: modules.databases.api.get_all
+            summary: Get all databases
+            description: |
+                The Products endpoint returns information about the *Uber* products
+                offered at a given location. The response includes the display name
+                and other details about each product, and lists the products in the
+                proper display order.
+            parameters:
+                - $ref: '#/parameters/api_key'
+            responses:
+                200:
+                    description: List of databases
+                    schema:
+                        $ref: '#/definitions/Items'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /{cuid}:
+        get:
+            tags: [Databases]
+            operationId: modules.databases.api.get_item
+            summary: Get a single database
+            parameters:
+                - $ref: '#/parameters/api_key'
+                - $ref: '#/parameters/cuid'
+            responses:
+                200:
+                   description: Return database
+                   schema:
+                        $ref: '#/definitions/Item'
+                404:
+                    description: Database does not exist
+        put:
+            tags: [Databases]
+            operationId: modules.databases.api.edit_item
+            summary: Edit database
+            description: |
+                This endpoint is for edit existing database.
+            parameters:
+                - $ref: '#/parameters/api_key'
+                - $ref: '#/parameters/cuid'
+                - name: bdata
+                  in: body
+                  required: true
+                  schema:
+                        $ref: '#/definitions/EditItem'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+        delete:
+            tags: [Databases]
+            operationId: modules.databases.api.delete_item
+            summary: Delete database
+            description: |
+                This endpoint is for delete existing database.
+            parameters:
+                - $ref: '#/parameters/api_key'
+                - $ref: '#/parameters/cuid'
+            responses:
+                200:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+    /{cuid}/chgpwd:
+        post:
+            tags: [Databases]
+            operationId: modules.databases.api.chgpwd_item
+            summary: Change database password
+            description: |
+                This endpoint is for change the password of a existing database.
+            parameters:
+                - $ref: '#/parameters/api_key'
+                - $ref: '#/parameters/cuid'
+                - name: bdata
+                  in: body
+                  required: false
+                  description: The new password you want, or, if empty, we generate one for you.
+                  schema:
+                        $ref: '#/definitions/ChgPwd'
+            responses:
+                200:
+                    $ref: '#/responses/SuccessPassword'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
+
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+#securityDefinitions:
+#    oauth:
+#        type: oauth2
+#        flow: implicit
+#        authorizationUrl: https://instagram.com/oauth/authorize/?client_id=CLIENT-ID&redirect_uri=REDIRECT-URI&response_type=token
+#        scopes:
+#            basic: |
+#                to read any and all data related to a user (e.g. following/followed-by
+#                lists, photos, etc.) (granted by default)
+#            comments: to create or delete comments on a user’s behalf
+#            relationships: to follow and unfollow users on a user’s behalf
+#            likes: to like and unlike items on a user’s behalf
+#    api_key:
+#        type: apiKey
+#        in: header
+#        name: X-Api-Key
+#security:
+#    - oauth:
+#        - basic
+#        - comments
+#        - relationships
+#        - likes
+#    - key: []
+
+
+#securityDefinitions:
+#    yapi_key:
+#        type: apiKey
+#        name: xapi_key
+#        in: header
+#    petstore_auth:
+#        type: oauth2
+#        authorizationUrl: http://petstore.swagger.io/api/oauth/dialog
+#        flow: implicit
+#        scopes:
+#            write_pets: modify pets in your account
+#            read_pets: read your pets
+
+parameters:
+    api_key:
+        name: X-Api-Key
+        description: API Key
+        in: header
+        type: string
+        required: true
+        pattern: "^[a-zA-Z0-9-]+$"
+    cuid:
+        name: cuid
+        description: Item Universal unique identifier
+        in: path
+        type: string
+        required: true
+        pattern: "^[a-zA-Z0-9-]+$"
+    page:
+        name: page
+        in: query
+        description: Current page number
+        required: false
+        type: integer
+        format: int32
+        default: 1
+        minimum: 1
+    limit:
+        name: limit
+        in: query
+        description: Limits the number of returned items
+        required: false
+        type: integer
+        format: int32
+        default: 10
+        minimum: 10
+        maximum: 100
+        multipleOf: 10
+    item:
+        name: item
+        in: body
+        description: An item
+        schema:
+            $ref: "#/definitions/Item"
+
+
+# define reusable definitions:
+definitions:
+    ChgPwd:
+        type: object
+        properties:
+            password:
+                type: string
+                description: New database password
+                example: "#some2019good@d#"
+                minLength: 8
+                maxLength: 16
+    EditItem:
+        type: object
+        required:
+            - dbdescription
+        properties:
+            dbdescription:
+                type: string
+                description: Database description
+                example: "New database description"
+                minLength: 1
+                maxLength: 255
+    NewItem:
+        type: object
+        required:
+            - dbprovider
+            - dbdescription
+            - dbname
+            - dbuser
+        properties:
+            dbdescription:
+                type: string
+                description: Database description
+                example: "Database in Amazon RDS service"
+                minLength: 1
+                maxLength: 255
+            dbname:
+                type: string
+                description: Database name
+                example: "user_dbname"
+                minLength: 1
+                maxLength: 63
+            dbprovider:
+                type: string
+                description: Database provider guuid
+                example: "ciqzp40u2000s8d45jzsito86"
+            dbuser:
+                type: string
+                description: Database user
+                example: "username"
+                minLength: 1
+                maxLength: 32
+    Item:
+        type: object
+        required:
+            - dbprovider
+            - dbdescription
+            - dbname
+            - dbuser
+        properties:
+            _created_at:
+                type: string
+                format: date-time
+                description: Creation time
+                example: "2016-07-25T13:20:41"
+                readOnly: true
+            _last_updated:
+                type: string
+                format: date-time
+                description: Last update time
+                example: "2016-07-25T13:20:41"
+                readOnly: true
+            _cuid:
+                type: string
+                description: Universal unique id of the database
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+            dbdescription:
+                type: string
+                description: Database description
+                example: "Database in Amazon RDS service"
+                minLength: 1
+                maxLength: 255
+            dbname:
+                type: string
+                description: Database name
+                example: "user_dbname"
+                minLength: 1
+                maxLength: 63
+            dbprovider:
+                type: string
+                description: Database provider ipuid
+                example: "ciqzp40u2000s8d45jzsito86"
+            dbuser:
+                type: string
+                description: Database user
+                example: "username"
+                minLength: 1
+                maxLength: 32
+    Items:
+        type: array
+        items:
+            $ref: '#/definitions/Item'
+
+    Message:
+        type: object
+        properties:
+            message:
+                type: string
+    NewPassword:
+        type: object
+        properties:
+            password:
+                type: string
+
+    Error:
+        type: object
+        properties:
+            code:
+                type: integer
+                format: int32
+            message:
+                type: string
+            field:
+                type: string
+
+    Errors:
+        type: array
+        items:
+            $ref: '#/definitions/Error'
+
+    ValidationError:
+        type: object
+        properties:
+            message:
+                type: string
+            errors:
+                $ref: '#/definitions/Errors'
+
+
+
+
+# define reusable responses:
+responses:
+    Success:
+        description: Success
+    SuccessMessage:
+        description: Success
+        schema:
+            $ref: '#/definitions/Message'
+    SuccessPassword:
+        description: Success with new password generated
+        schema:
+            $ref: '#/definitions/NewPassword'
+
+    400BadRequest:
+        description: The request was invalid or cannot be otherwise served.
+        schema:
+            $ref: '#/definitions/ValidationError'
+    401Unauthorized:
+        description: Authentication credentials were missing or incorrect.
+        schema:
+            $ref: '#/definitions/Message'
+    403Forbidden:
+        description: The request is understood, but it has been refused or access is not allowed.
+        schema:
+            $ref: '#/definitions/Message'
+    404NotFound:
+        description: The URI requested is invalid or the resource requested does not exists. 
+        schema:
+            $ref: '#/definitions/Message'
+    429TooManyRequests:
+        description: The request cannot be served due to the application’s rate limit having been exhausted for the resource. 
+        schema:
+            $ref: '#/definitions/Message'
+    500InternalServerError:
+        description: Something is broken.
+        schema:
+            $ref: '#/definitions/Message'
+    503ServiceUnavailable:
+        description: The server is up, but overloaded with requests. Try again later. 
+        schema:
+            $ref: '#/definitions/Message'
+

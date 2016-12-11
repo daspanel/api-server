@@ -1,0 +1,8 @@
+setuptools
+wheel
+flake8
+flakeplus
+tox
+sphinx2rst
+bumpversion
+pip-tools
