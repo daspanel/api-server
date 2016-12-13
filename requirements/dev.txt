@@ -1,4 +1,5 @@
-flask 
+flask
+tinydb-jsonorm
 click
 gunicorn
 json-logging-py
