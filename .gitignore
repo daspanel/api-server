@@ -25,3 +25,6 @@ celery/tests/cover/
 .ve*
 cover/
 .vagrant/
+container_data/
+*.dev.env
+
