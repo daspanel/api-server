@@ -1,0 +1,45 @@
+version: '2'
+services:
+    daspanel-api-dev:
+        build:
+            context: docker-dev
+            dockerfile: Dockerfile
+        image: daspanel/api-dev
+        volumes:
+            #- daspanel-data-dev:/opt/daspanel/data
+            - ./container_data:/opt/daspanel/data
+            - .:/opt/daspanel/apps/apiserver
+        networks:
+            - frontend
+            - backend
+        environment:
+            - LOCAL_USER_ID=1000
+            - GUNICORN_APP_DIR=/opt/daspanel/apps/apiserver/api_server
+            #- GUNICORN_CMD=/opt/daspanel/apps/apiserver/api_server/wsgi_gunicorn --user=daspanel --group=daspanel api-connexion:app Daspanel_Api_Server
+            - PIP_INSTALL=-r /opt/daspanel/apps/apiserver/requirements/dev.txt -r /opt/daspanel/apps/apiserver/requirements/docs.txt -r /opt/daspanel/apps/apiserver/requirements/pkgutils.txt
+        env_file:
+            - daspanel.dev.env
+            - smtp.dev.env
+        expose:
+            - "5000"
+        ports:
+            - "5000:5000"
+
+#volumes:
+    #daspanel-data:
+    #    external:
+    #        name: daspanel-data
+    #daspanel-data-dev:
+    #    driver: local
+    #    driver_opts:
+    #        type: none
+    #        device: /home/abner/Devel/data
+    #        o: bind
+
+networks:  
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+

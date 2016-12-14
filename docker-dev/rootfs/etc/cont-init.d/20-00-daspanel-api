@@ -1,0 +1,102 @@
+#!/usr/bin/with-contenv sh
+
+# Master admin email must be informed
+if [ -z "$DASPANEL_MASTER_EMAIL" ]; then
+    echo "***"
+    echo "ERROR: You must set the env variable DASPANEL_MASTER_EMAIL to a valid email"
+    echo "***"
+    exit 1
+fi
+
+# unless this has already been defined, set
+if [ -z "$DASPANEL_MASTER_PASSWORD" ]; then
+    echo "***"
+    echo "ERROR: You must set the env variable DASPANEL_MASTER_PASSWORD to a valid password"
+    echo "***"
+    exit 1
+fi
+
+# unless this has already been defined, set
+if [ -z "$DASPANEL_GUUID" ]; then
+    echo "***"
+    echo "ERROR: You must set the env variable DASPANEL_GUUID to a valid GUUID"
+    echo "***"
+    exit 1
+fi
+
+# unless this has already been defined, set
+if [ -z "$DASPANEL_DOMAIN" ]; then
+    export DASPANEL_URL="http://api.daspanel.site:5000"
+    export DASPANEL_API_URL="http://api.daspanel.site:5000/1.0/sites/"
+    export DASPANEL_API_DOCS="http://api.daspanel.site:5000/1.0/sites/ui/"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/containers" ]; then
+	mkdir -p /opt/daspanel/data/$DASPANEL_GUUID/containers
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/content" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/content"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/db" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/db"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/sessions" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/sessions"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/upload" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/upload"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/upload/tmp" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/upload/tmp"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/content" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/content"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/certs" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/certs"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/certs/_account" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/certs/_account"
+fi
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/letsencrypt" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/letsencrypt"
+fi
+
+if [ ! -d "/opt/daspanel/log/$DASPANEL_GUUID/apiserver" ]; then
+	mkdir -p "/opt/daspanel/log/$DASPANEL_GUUID/apiserver"
+fi
+
+# Send email with instance info
+echo "daspanel-api: Sending setup info email to $DASPANEL_MASTER_EMAIL"
+{ 
+    echo "To: $DASPANEL_MASTER_EMAIL"; 
+    echo "From: $DASPANEL_MAIL_USER"; 
+    echo "Subject: DASPANEL instance $DASPANEL_GUUID is running"; 
+    echo ""; 
+    echo "X-Api-Key:";
+    echo "   $DASPANEL_GUUID";
+    echo ""; 
+    echo "Url:";
+    echo "   $DASPANEL_URL";
+    echo "";
+    echo "API Docs Url:";
+    echo "   $DASPANEL_API_DOCS";
+    echo ""; 
+    echo "";
+    if [ -f /opt/daspanel/data/$DASPANEL_GUUID/containers/mysql.configured ]; then
+        echo "*** MYSQL CONFIG ***";
+        echo "$(cat /opt/daspanel/data/$DASPANEL_GUUID/containers/mysql.configured)";
+    fi
+    echo ""; 
+    echo ""; 
+} | ssmtp $DASPANEL_MASTER_EMAIL
+
