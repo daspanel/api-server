@@ -1,0 +1,22 @@
+# SITE TYPE = {{ sitetype }}
+{{ name }} {
+   errors {
+        log /opt/daspanel/log/{$DASPANEL_GUUID}/caddy/{{ domain }}-error.log {
+            size 10 # Rotate after 10 MB
+            age  7  # Keep log files for 14 days
+            keep 5  # Keep at most 10 log files
+        }
+    }
+    log / /opt/daspanel/log/{$DASPANEL_GUUID}/caddy/{{ domain }}-access.log "{>Referer} {remote} {when} {method} {uri} {proto} {status} {size} {>User-Agent} {latency} {request}" {
+        rotate {
+            size 10 # Rotate after 10 MB
+            age  14  # Keep log files for 14 days
+            keep 10  # Keep at most 10 log files
+        }
+    }
+    root {{ dir }}
+    gzip
+    tls off
+    fastcgi / daspanel-php-fpm-5.6:9000 php
+}
+

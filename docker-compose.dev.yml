@@ -1,13 +1,74 @@
 version: '2'
 services:
-    daspanel-api-dev:
+    daspanel-s3-server:
+        image: daspanel/minio-fileserver
+        volumes:
+            - daspanel-data-dev:/opt/daspanel/data
+        networks:
+            - backend
+        expose:
+            - "9000"
+        env_file:
+            - daspanel.dev.env
+            - smtp.dev.env
+    daspanel-mariadb:
+        image: daspanel/mariadb
+        volumes:
+            - daspanel-data-dev:/opt/daspanel/data
+        networks:
+            backend:
+                aliases:
+                    - daspanel-mysql
+        expose:
+            - "3306"
+        environment:
+            - MARIADB_REMOTE_ROOT=true
+        env_file:
+            - daspanel.dev.env
+            - smtp.dev.env
+    daspanel-php-fpm-5.6:
+        image: daspanel/php-fpm-5.6
+        volumes:
+            - daspanel-data-dev:/opt/daspanel/data
+        networks:
+            - backend
+        expose:
+            - "9000"
+        env_file:
+            - daspanel.dev.env
+            - smtp.dev.env
+    daspanel-php-fpm-7.0:
+        image: daspanel/php-fpm-7.0
+        volumes:
+            - daspanel-data-dev:/opt/daspanel/data
+        networks:
+            - backend
+        expose:
+            - "9000"
+        env_file:
+            - daspanel.dev.env
+            - smtp.dev.env
+    daspanel-caddy-http-server:
+        image: daspanel/caddy-http-server
+        volumes:
+            - daspanel-data-dev:/opt/daspanel/data
+        networks:
+            - frontend
+            - backend
+        ports:
+            - "80:80"
+            - "443:443"
+        env_file:
+            - daspanel.dev.env
+            - smtp.dev.env
+    daspanel-api:
         build:
-            context: docker-dev
-            dockerfile: Dockerfile
+            context: Docker
+            dockerfile: Dockerfile.dev
         image: daspanel/api-dev
         volumes:
             #- daspanel-data-dev:/opt/daspanel/data
-            - ./container_data:/opt/daspanel/data
+            - daspanel-data-dev:/opt/daspanel/data
             - .:/opt/daspanel/apps/apiserver
         networks:
             - frontend
@@ -15,26 +76,25 @@ services:
         environment:
             - LOCAL_USER_ID=1000
             - GUNICORN_APP_DIR=/opt/daspanel/apps/apiserver/api_server
-            #- GUNICORN_CMD=/opt/daspanel/apps/apiserver/api_server/wsgi_gunicorn --user=daspanel --group=daspanel api-connexion:app Daspanel_Api_Server
+            #- GUNICORN_CMD=/opt/daspanel/apps/apiserver/api_server/wsgi_gunicorn --bind=0.0.0.0:8080 --user=daspanel --group=daspanel api-connexion:app Daspanel_Api_Server
             - PIP_INSTALL=-r /opt/daspanel/apps/apiserver/requirements/dev.txt -r /opt/daspanel/apps/apiserver/requirements/docs.txt -r /opt/daspanel/apps/apiserver/requirements/pkgutils.txt
         env_file:
             - daspanel.dev.env
             - smtp.dev.env
         expose:
             - "5000"
-        ports:
-            - "5000:5000"
+            - "8080"
 
-#volumes:
+volumes:
     #daspanel-data:
     #    external:
     #        name: daspanel-data
-    #daspanel-data-dev:
-    #    driver: local
-    #    driver_opts:
-    #        type: none
-    #        device: /home/abner/Devel/data
-    #        o: bind
+    daspanel-data-dev:
+        driver: local
+        driver_opts:
+            type: none
+            device: /home/abner/Devel/data
+            o: bind
 
 networks:  
   frontend:
