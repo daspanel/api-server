@@ -8,10 +8,11 @@ from pprint import pprint
 
 # Daspanel system imports
 from lib.daspanel_uuid.uuid import UuidGen
-try:
-    from daspanel_fs import DasFs
-except:
-    from lib.daspanel_fs.fslocal import DasFs
+from lib.daspanel_errors import DASPANEL_ERRORS
+#try:
+#    from daspanel_fs import DasFs
+#except:
+#    from lib.daspanel_fs.fslocal import DasFs
 
 # Load configuration
 import config as CONFIG

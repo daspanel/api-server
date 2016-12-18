@@ -43,6 +43,12 @@ DASPANEL_ERRORS = {
     'FSDIREXISTS': ApiErrorMsgType(401, 'Directory Exists', 
         'Directory exists in file system: {0}', 
         error_doc),
+    'FSFILEEXISTS': ApiErrorMsgType(401, 'File Exists', 
+        'File exists in file system: {0}', 
+        error_doc),
+    'NOTZIPFILE': ApiErrorMsgType(401, 'File is not zip', 
+        'File is not of the type zip: {0}', 
+        error_doc),
 
 }
 

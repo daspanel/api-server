@@ -30,5 +30,9 @@ SITES_ERRORS = {
     'MISSINGDRIVER': ApiErrorMsgType(401, 'Missing Driver', 
         'DasPanel Api server for sites is not running this driver: {0}', 
         error_doc),
+    'CONTENTWITHOUTINDEX': ApiErrorMsgType(401, 'Content without index', 
+        'Uploaded site content not have acceptable index file: {0}', 
+        error_doc),
+
 }
 

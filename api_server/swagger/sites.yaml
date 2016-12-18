@@ -678,6 +678,41 @@ paths:
                     $ref: '#/responses/503ServiceUnavailable'
 
 
+    /content/{cuid}/remotezip:
+        post:
+            tags: [SiteContent]
+            operationId: modules.sites.api_content.install_remotezip
+            summary: Create site content using remote zip file.
+            description: |
+                This endpoint is used to put content in site current version 
+                downloading an remote zip file. An new version for the site is
+                always created
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - name: bdata
+                  in: body
+                  required: true
+                  description: Download settings for the zip file.
+                  schema:
+                        $ref: '#/definitions/ZipContent'
+            responses:
+                202:
+                   description: Return task queue id
+                   $ref: '#/responses/202Accepted'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
 
 ################################################################################
 #                                  Security                                    #
@@ -781,6 +816,55 @@ parameters:
 
 # define reusable definitions:
 definitions:
+    ZipContent:
+        type: object
+        required:
+            - url
+            - auth_type
+            - user
+            - password
+            - directory
+        properties:
+            url:
+                type: string
+                description: Complete url from where download the file
+                example: "https://wordpress.org/latest.zip"
+                minLength: 1
+                maxLength: 255
+            auth_type:
+                type: string
+                description: Auth to be used when downlaoding file
+                example: "NONE"
+                minLength: 1
+                maxLength: 15
+                enum:
+                    - NONE
+                    - BASIC
+            user:
+                type: string
+                description: Auth user
+                example: "username"
+                minLength: 1
+                maxLength: 255
+            password:
+                type: string
+                description: Auth password
+                example: "mypassword"
+                minLength: 1
+                maxLength: 255
+            directory:
+                type: string
+                description: Directory where to put content
+                example: "/"
+                minLength: 1
+                maxLength: 255
+
+            #new_version:
+            #    description: New version info
+            #    $ref: '#/definitions/NewVersionItem'
+
+
+
     ChgPwd:
         type: object
         properties:
@@ -1131,6 +1215,10 @@ responses:
         description: Success with new url prefix for the site
         schema:
             $ref: '#/definitions/UrlPrefix'
+    202Accepted:
+        description: The request was accepted.
+        schema:
+            $ref: '#/definitions/Message'
 
     400BadRequest:
         description: The request was invalid or cannot be otherwise served.

@@ -3,6 +3,7 @@ from __future__ import absolute_import, division, print_function
 import os
 import errno
 import shutil
+import zipfile
 
 # http://stackoverflow.com/questions/28035685/improper-use-of-new-to-generate-classes
 
@@ -108,6 +109,45 @@ class DasFs(object):
         os.write(f,contents)
         os.close(f)
         return
+
+    def open(self, filepath, mode):
+        full_path = '{0}{1}'.format(self._params.datadir, filepath)
+        print("FS.OPEN: ", full_path)
+        return open(full_path, mode)
+
+    def is_zip(self, filepath):
+        full_path = '{0}{1}'.format(self._params.datadir, filepath)
+        print("FS.IS_ZIP: ", full_path)
+        return zipfile.is_zipfile(full_path)
+
+    def extract_zip(self, filepath, todir):
+        file_full_path = '{0}{1}'.format(self._params.datadir, filepath)
+        dir_full_path = '{0}{1}'.format(self._params.datadir, todir)
+        print("FS.IS_ZIP: ", file_full_path, dir_full_path)
+        zipfile.ZipFile(file_full_path, "r").extractall(dir_full_path)
+
+    def zip_index_exist(self, filepath):
+        result = False
+        full_path = '{0}{1}'.format(self._params.datadir, filepath)
+        print("FS.ZIP_HAVEINDEX: ", full_path)
+        with zipfile.ZipFile(full_path, "r") as z:
+            for zfile in z.namelist():
+                zfile = os.path.split(zfile)
+                if zfile[1] == 'index.html' or zfile[1] == 'index.php':
+                    print(zfile)
+                    result = True
+                    break
+        return result
+
+    def site_root(self, dir):
+        index_dir = None
+        dir_full_path = '{0}{1}'.format(self._params.datadir, dir)
+        print("FS.SITE_ROOT: ", dir_full_path)
+        for root, dirs, files in os.walk(dir_full_path):
+            if 'index.html' in files or 'index.php' in files:
+                index_dir = root.replace(self._params.datadir, '')
+                break
+        return index_dir
 
 def register(module_name, handler_collection):
     handler_collection.add_class(module_name, DasFs)
