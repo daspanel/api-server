@@ -4,4 +4,3 @@ click
 gunicorn
 json-logging-py
 connexion
-zipfile
