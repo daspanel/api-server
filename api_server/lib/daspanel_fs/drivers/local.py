@@ -4,6 +4,7 @@ import os
 import errno
 import shutil
 import zipfile
+from distutils.dir_util import copy_tree
 
 # http://stackoverflow.com/questions/28035685/improper-use-of-new-to-generate-classes
 
@@ -94,6 +95,13 @@ class DasFs(object):
         thedestdir = '{0}{1}'.format(self._params.datadir, dest)
         print('cloning to  : ', thedestdir)
         shutil.copytree(theorigdir, thedestdir)
+
+    def copy_tree(self, orig, dest):
+        theorigdir = '{0}{1}'.format(self._params.datadir, orig)
+        print('copying from: ', theorigdir)
+        thedestdir = '{0}{1}'.format(self._params.datadir, dest)
+        print('copying to  : ', thedestdir)
+        copy_tree(theorigdir, thedestdir)
 
     def write_file(self, filepath, contents):
         full_path = '{0}{1}'.format(self._params.datadir, filepath)

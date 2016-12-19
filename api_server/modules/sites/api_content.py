@@ -61,6 +61,7 @@ def install_remotezip(cuid, bdata):
             return api_fail(DASPANEL_ERRORS, 'NOTZIPFILE', bdata['url'])
 
         fs.extract_zip(tmp_file, tmp_dir)
+        fs.remove(tmp_file)
 
         content_root = fs.site_root(tmp_dir)
         if content_root == None:
@@ -68,14 +69,12 @@ def install_remotezip(cuid, bdata):
             fs.rmtree(tmp_dir)
             return api_fail(SITES_ERRORS, 'CONTENTWITHOUTINDEX', bdata['url'])
 
-        print ('Copyng from: ', content_root, 'To: ', site.active_dir)
-        fs.cptree(content_root, site.active_dir)
-
-cptre não funcional pois o dest existe
-
+        print ('Copying from: ', content_root, 'To: ', site.active_dir)
+        fs.copy_tree(content_root, site.active_dir)
+        fs.rmtree(tmp_dir)
 
     else:
         return api_fail(DASPANEL_ERRORS, 'FSFILEEXISTS', tmp_file)
 
-    return {"location": 'xxx'}, 202
+    return {"location": site.active_dir}, 202
 
