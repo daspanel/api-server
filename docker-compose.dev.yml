@@ -1,5 +1,13 @@
 version: '2'
 services:
+    daspanel-services:
+        image: daspanel/daspanel-services
+        volumes:
+            - /opt/daspanel/services
+        networks:
+            - backend
+        command:
+            - /bin/true
     daspanel-s3-server:
         image: daspanel/minio-fileserver
         volumes:
@@ -41,6 +49,8 @@ services:
         image: daspanel/php-fpm-7.0
         volumes:
             - daspanel-data-dev:/opt/daspanel/data
+        volumes_from:
+            - daspanel-services:ro
         networks:
             - backend
         expose:
@@ -52,6 +62,8 @@ services:
         image: daspanel/caddy-http-server
         volumes:
             - daspanel-data-dev:/opt/daspanel/data
+        volumes_from:
+            - daspanel-services:ro
         networks:
             - frontend
             - backend
