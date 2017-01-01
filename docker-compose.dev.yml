@@ -82,6 +82,7 @@ services:
             #- daspanel-data-dev:/opt/daspanel/data
             - daspanel-data-dev:/opt/daspanel/data
             - .:/opt/daspanel/apps/apiserver
+            - /home/abner/Devel/abnerjacobsen/python/daspanelweb:/opt/daspanel/apps/daspanelweb
         networks:
             - frontend
             - backend
