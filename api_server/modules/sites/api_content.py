@@ -31,7 +31,7 @@ from connexion import NoContent, request
 from daspanel_connexion_utils import api_fail
 
 def install_remotezip(cuid, bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:

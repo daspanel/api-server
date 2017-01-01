@@ -26,7 +26,7 @@ from connexion import NoContent, request
 from daspanel_connexion_utils import api_fail
 
 def httpserver_reload(servertype):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.sites.drivers.plugin_exist(servertype)):
@@ -36,7 +36,7 @@ def httpserver_reload(servertype):
     return driver.reload()
 
 def httpserver_deactivate(cuid, servertype):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -53,7 +53,7 @@ def httpserver_deactivate(cuid, servertype):
         return NoContent, 404
 
 def httpserver_activate(cuid, servertype):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -70,7 +70,7 @@ def httpserver_activate(cuid, servertype):
         return NoContent, 404
 
 def httpserver_gencfg(cuid, servertype):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:

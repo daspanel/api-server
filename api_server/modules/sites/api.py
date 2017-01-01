@@ -22,7 +22,7 @@ from connexion import request
 from daspanel_connexion_utils import api_fail
 
 def redirects_get_all(cuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -32,7 +32,7 @@ def redirects_get_all(cuid):
     return site.to_struct()['redirects']
 
 def redirects_get_item(cuid, rcuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -49,7 +49,7 @@ def redirects_get_item(cuid, rcuid):
     return redirect
 
 def redirects_edit_item(cuid, rcuid, bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -76,7 +76,7 @@ def redirects_edit_item(cuid, rcuid, bdata):
     return redirects[vedit], 200
 
 def redirects_delete_item(cuid, rcuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -100,7 +100,7 @@ def redirects_delete_item(cuid, rcuid):
     site.save()
 
 def redirects_new_item(cuid, bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -121,7 +121,7 @@ def redirects_new_item(cuid, bdata):
 
 
 def versions_activate(cuid, vcuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -144,7 +144,7 @@ def versions_activate(cuid, vcuid):
     return site.to_struct(), 200
 
 def versions_clone(cuid, vcuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -185,7 +185,7 @@ def versions_clone(cuid, vcuid):
     return newver.to_struct(), 201
 
 def versions_edit_item(cuid, vcuid, bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -209,7 +209,7 @@ def versions_edit_item(cuid, vcuid, bdata):
     return versions[vedit], 200
 
 def versions_delete_item(cuid, vcuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -243,7 +243,7 @@ def versions_delete_item(cuid, vcuid):
 
 
 def versions_get_item(cuid, vcuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -260,7 +260,7 @@ def versions_get_item(cuid, vcuid):
     return version
 
 def versions_get_all(cuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -271,7 +271,7 @@ def versions_get_all(cuid):
 
 
 def versions_new_item(cuid, bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -296,7 +296,7 @@ def versions_new_item(cuid, bdata):
     return newver.to_struct(), 201
 
 def get_item(cuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -307,14 +307,14 @@ def get_item(cuid):
 
 def get_all():
     print(request.headers)
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     all_rows = SiteModel.all()
     return [site.to_struct() for site in all_rows]
 
 def new_item(bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
@@ -344,7 +344,7 @@ def new_item(bdata):
     return newrec.to_struct(), 201
 
 def edit_item(cuid, bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -361,7 +361,7 @@ def edit_item(cuid, bdata):
     #return {"newpaswd": "xxxxx"}, 200
     
 def delete_item(cuid):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
@@ -377,7 +377,7 @@ def delete_item(cuid):
     rec2delete.delete()
 
 def chgpwd_item(cuid, bdata):
-    tenant = request.headers['X-Api-Key']
+    tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
