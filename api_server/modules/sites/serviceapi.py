@@ -33,7 +33,8 @@ def httpserver_reload(servertype):
         return api_fail(SITES_ERRORS, 'MISSINGDRIVER', servertype)
 
     driver =  CONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
-    return driver.reload()
+    status, result = driver.reload()
+    return NoContent, 204
 
 def httpserver_deactivate(cuid, servertype):
     tenant = request.headers['Authorization']
@@ -47,10 +48,11 @@ def httpserver_deactivate(cuid, servertype):
         return api_fail(SITES_ERRORS, 'MISSINGDRIVER', servertype)
 
     driver =  CONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
-    if driver.deactivate(site.to_struct()):
-        return NoContent, 200
+    status, result = driver.deactivate(site.to_struct())
+    if status:
+        return NoContent, 204
     else:
-        return NoContent, 404
+        return api_fail(SITES_ERRORS, 'SITEDESACTIVATIONERROR', result, servertype)
 
 def httpserver_activate(cuid, servertype):
     tenant = request.headers['Authorization']
@@ -64,10 +66,11 @@ def httpserver_activate(cuid, servertype):
         return api_fail(SITES_ERRORS, 'MISSINGDRIVER', servertype)
 
     driver =  CONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
-    if driver.activate(site.to_struct()):
-        return NoContent, 200
+    status, result = driver.activate(site.to_struct())
+    if status:
+        return NoContent, 204
     else:
-        return NoContent, 404
+        return api_fail(SITES_ERRORS, 'SITEACTIVATIONERROR', result, servertype)
 
 def httpserver_gencfg(cuid, servertype):
     tenant = request.headers['Authorization']

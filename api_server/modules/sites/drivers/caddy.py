@@ -52,7 +52,7 @@ class SitesConf():
         '''Force reload of configuration files using inotify.'''
         filepath = self.sitesenableddir + '/FORCERELOAD'
         self.fs.write_file(filepath=filepath, contents='1')
-        return True
+        return True, ""
 
     def deactivate(self, site):
         enfilepath = self.sitesenableddir + '/' + site['_cuid'] + '.conf'
@@ -63,10 +63,10 @@ class SitesConf():
             except OSError as e:
                 if e.errno != errno.ENOENT:
                     print('deactivate OSError: ', e)
-                raise
-            return True
+                return False, "Filesystem error"
+            return True, ""
         else:
-            return False
+            return False, "Site not active"
 
     def activate(self, site):
         filepath = self.sitesavailabledir + '/' + site['_cuid'] + '.conf'
@@ -81,15 +81,15 @@ class SitesConf():
                     self.fs.copy2(avfilepath, enfilepath)
                 except Exception as e:
                     print(e)
-                    return False
+                    return False, "Filesystem error"
             else:
                 print("File exist: " + enfilepath)
-                return False
+                return False, "Site already active"
         else:
             print("File not exist: " + avfilepath)
-            return False
+            return False, "Site dont have configuration. Generate it first and after activate it"
         print("Site active")
-        return True
+        return True, ""
 
 
     def generate(self, site):

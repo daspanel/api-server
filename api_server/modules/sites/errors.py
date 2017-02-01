@@ -35,6 +35,10 @@ SITES_ERRORS = {
         error_doc),
     'TEMPLATENOTFOUND': ApiErrorMsgType(403, 'Template not found', 
         'Template not found: {0} for {1}', error_doc),
+    'SITEACTIVATIONERROR': ApiErrorMsgType(403, 'Error in site activaction', 
+        'Error in site activaction: {0} for {1}', error_doc),
+    'SITEDESACTIVATIONERROR': ApiErrorMsgType(403, 'Error in site desactivaction', 
+        'Error in site desactivaction: {0} for {1}', error_doc),
 
 }
 

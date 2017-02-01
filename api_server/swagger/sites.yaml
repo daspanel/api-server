@@ -265,7 +265,7 @@ paths:
                 - $ref: '#/parameters/cuid'
                 - $ref: '#/parameters/servertype'
             responses:
-                200:
+                204:
                     $ref: '#/responses/Success'
                 400:
                     $ref: '#/responses/400BadRequest'
@@ -292,7 +292,7 @@ paths:
                 - $ref: '#/parameters/cuid'
                 - $ref: '#/parameters/servertype'
             responses:
-                200:
+                204:
                     $ref: '#/responses/Success'
                 400:
                     $ref: '#/responses/400BadRequest'
@@ -318,7 +318,7 @@ paths:
             parameters:
                 - $ref: '#/parameters/servertype'
             responses:
-                200:
+                204:
                     $ref: '#/responses/Success'
                 400:
                     $ref: '#/responses/400BadRequest'
