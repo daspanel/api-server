@@ -26,7 +26,8 @@ DEF_GUNICORN_CFG['backlog'] = "1024"
 # for nginx or other proxy:
 #bind = "unix:/app/run/gunicorn.sock"
 
-DEF_GUNICORN_CFG['workers'] = multiprocessing.cpu_count() * 2 + 1
+#DEF_GUNICORN_CFG['workers'] = multiprocessing.cpu_count() * 2 + 1
+DEF_GUNICORN_CFG['workers'] = 1
 
 # should save some memory, must be = False if reload = True:
 DEF_GUNICORN_CFG['preload_app'] = True
