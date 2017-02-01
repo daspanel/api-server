@@ -28,7 +28,11 @@ class ApiErrorMsgType(list):
         return self[item]
 
 def error_msg(error_list, errid, *args):
+    #print("error_msg.error_list: ", error_list)
+    #print("error_msg.errid: ", errid)
+    #print("error_msg.args: ", *args)
     retlist = error_list[errid]
+    #print("retlist: ", retlist)
     retlist[2] = retlist[2].format(*args)
     return retlist
 

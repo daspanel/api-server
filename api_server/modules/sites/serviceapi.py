@@ -86,7 +86,10 @@ def httpserver_gencfg(cuid, servertype):
 
     #gen_cfg = site_drivers.get_instance(servertype, 'SitesConf', tenant=tenant)
     gen_cfg =  CONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
-    return gen_cfg.generate(site.to_struct())
+    status, result = gen_cfg.generate(site.to_struct())
+    if not status:
+        return api_fail(SITES_ERRORS, 'TEMPLATENOTFOUND', result, servertype)
+    return NoContent, 204
     #return gen_cfg._params
 
 

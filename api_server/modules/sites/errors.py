@@ -33,6 +33,8 @@ SITES_ERRORS = {
     'CONTENTWITHOUTINDEX': ApiErrorMsgType(401, 'Content without index', 
         'Uploaded site content not have acceptable index file: {0}', 
         error_doc),
+    'TEMPLATENOTFOUND': ApiErrorMsgType(403, 'Template not found', 
+        'Template not found: {0} for {1}', error_doc),
 
 }
 

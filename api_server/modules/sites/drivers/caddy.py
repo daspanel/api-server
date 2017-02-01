@@ -113,7 +113,7 @@ class SitesConf():
                 print("USING SYSTEM TEMPLATE")
             else:
                 print("Error1: template not found: {0} or {1}".format(template_file, tenant_template_file))
-                return False
+                return False, "{0}".format(template)
 
         for host in site['redirects']:
             print("Processing host: " + host['hosturl'] + '.' + host['domain'])
@@ -125,7 +125,7 @@ class SitesConf():
         filepath = self.sitesavailabledir + '/' + site['_cuid'] + '.conf'
         print("Saving site '%s' caddy conf to: %s" % (site['_cuid'], filepath))
         self.fs.write_file(filepath=filepath, contents=tmplresult)
-        return True
+        return True, ""
 
     def generate_subdomain(self, site, template):
         variables = {}

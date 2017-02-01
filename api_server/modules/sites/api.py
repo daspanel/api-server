@@ -320,6 +320,7 @@ def new_item(bdata):
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
 
+    print("Criando: ", bdata)
     newrec = SiteModel(**bdata)
     newrec.urlprefix = newrec._cuid
     newrec._created_at = datetime.utcnow()

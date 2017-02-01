@@ -83,7 +83,8 @@ paths:
     /:
         post:
             tags: [Sites]
-            operationId: modules.sites.api.new_item
+            x-swagger-router-controller: modules.sites.api
+            operationId: new_item
             summary: Insert new site
             description: |
                 This endpoint is for create an new site.
@@ -115,7 +116,8 @@ paths:
 
         get:
             tags: [Sites]
-            operationId: modules.sites.api.get_all
+            x-swagger-router-controller: modules.sites.api
+            operationId: get_all
             summary: Get all sites
             description: |
                 The sites endpoint returns information about the *Uber* products
@@ -144,7 +146,8 @@ paths:
     /{cuid}:
         get:
             tags: [Sites]
-            operationId: modules.sites.api.get_item
+            x-swagger-router-controller: modules.sites.api
+            operationId: get_item
             summary: Get a single database
             parameters:
                 - $ref: '#/parameters/cuid'
@@ -169,7 +172,8 @@ paths:
                     $ref: '#/responses/503ServiceUnavailable'
         put:
             tags: [Sites]
-            operationId: modules.sites.api.edit_item
+            x-swagger-router-controller: modules.sites.api
+            operationId: edit_item
             summary: Edit database
             description: |
                 This endpoint is for edit existing database.
@@ -199,7 +203,8 @@ paths:
                     $ref: '#/responses/503ServiceUnavailable'
         delete:
             tags: [Sites]
-            operationId: modules.sites.api.delete_item
+            x-swagger-router-controller: modules.sites.api
+            operationId: delete_item
             summary: Delete database
             description: |
                 This endpoint is for delete existing database.
@@ -233,10 +238,8 @@ paths:
                 - $ref: '#/parameters/cuid'
                 - $ref: '#/parameters/servertype'
             responses:
-                200:
-                    description: Server config.
-                    schema:
-                        $ref: '#/definitions/RedirectsItems'
+                204:
+                    $ref: '#/responses/Success'
                 400:
                     $ref: '#/responses/400BadRequest'
                 401:
@@ -861,13 +864,13 @@ definitions:
                 type: string
                 description: Auth user
                 example: "username"
-                minLength: 1
+                minLength: 0
                 maxLength: 255
             password:
                 type: string
                 description: Auth password
                 example: "mypassword"
-                minLength: 1
+                minLength: 0
                 maxLength: 255
             directory:
                 type: string
