@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from __future__ import absolute_import, division, print_function
+import copy
 
 # Daspanel system imports
 from lib.daspanel_errors import error_msg
@@ -31,5 +32,7 @@ class SiteNotFound(DaspanelApiException):
 
 
 def api_fail(error_list, errid, *args):
-    return problem(*error_msg(error_list, errid, *args))
+    # Dict cannt have shallow copy    
+    msglist = {key: value[:] for key, value in error_list.items()}
+    return problem(*error_msg(msglist, errid, *args))
 
