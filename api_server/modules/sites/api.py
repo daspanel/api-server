@@ -18,7 +18,7 @@ from .models.tinyj import SITES_DB, SiteVersion, SiteRedirects, SiteModel
 from .errors import SITES_ERRORS
 
 # API server imports
-from connexion import request
+from connexion import request, NoContent
 from daspanel_connexion_utils import api_fail
 
 def redirects_get_all(cuid):
@@ -217,7 +217,8 @@ def versions_delete_item(cuid, vcuid):
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
     if site.active_version == vcuid:
-        return {"errors": [], "message": "Cann't delete current active version of the site"}, 400
+        return api_fail(SITES_ERRORS, 'VERSIONISACTIVE', vcuid, site.sitedescription)
+        #return {"errors": [], "message": "Cann't delete current active version of the site"}, 400
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
 
@@ -240,7 +241,7 @@ def versions_delete_item(cuid, vcuid):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
-
+    return NoContent, 204
 
 def versions_get_item(cuid, vcuid):
     tenant = request.headers['Authorization']
