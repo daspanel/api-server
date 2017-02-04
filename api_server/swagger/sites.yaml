@@ -926,6 +926,7 @@ definitions:
                 example: "sitedev001"
                 minLength: 1
                 maxLength: 255
+                pattern: "^[a-zA-Z0-9-]+$"
     NewVersionItem:
         type: object
         required:
@@ -965,6 +966,7 @@ definitions:
                 example: "mydomain.com"
                 minLength: 1
                 maxLength: 255
+                pattern: "(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-).)+[a-zA-Z]{2,63}$)"
             ssl:
                 type: boolean
                 description: Redirect had SSL cert
@@ -1057,6 +1059,7 @@ definitions:
                 example: "cir22a51g0005mw45ay17gkeh"
                 minLength: 1
                 maxLength: 255
+                pattern: "^[a-zA-Z0-9-]+$"
             versions:
                 type: array
                 items:
@@ -1144,6 +1147,7 @@ definitions:
                 example: "mydomain.com"
                 minLength: 1
                 maxLength: 255
+                pattern: "(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-).)+[a-zA-Z]{2,63}$)"
             ssl:
                 type: boolean
                 description: Redirect had SSL cert
