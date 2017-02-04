@@ -27,7 +27,8 @@ class SiteRedirects(TinyJsonModel):
     hosturl = fields.StringField(required=True, validators=[validators.Length(0, 255)])
     domain = fields.StringField(required=True, validators=[validators.Length(1, 255)])
     ssl = fields.BoolField(required=True)
-    sslcert = fields.StringField(required=False, validators=[validators.Length(1, 255)])
+    sslcert = fields.StringField(required=False, validators=[validators.Length(0, 255)])
+    sslkey = fields.StringField(required=False, validators=[validators.Length(0, 255)])
 
 
 class SiteModel(TinyJsonModel):

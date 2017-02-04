@@ -951,6 +951,7 @@ definitions:
             - domain
             - ssl
             - sslcert
+            - sslkey
         properties:
             hosturl:
                 type: string
@@ -969,9 +970,15 @@ definitions:
                 description: Redirect had SSL cert
             sslcert:
                 type: string
-                description: Directory of SSL cert
-                example: "data/cit3gxhqh00007aruv60es3XX/certs/siteuuid-sdlkslkj/certuuid-09sdhsdojhsd"
-                minLength: 1
+                description: SSL cert file name
+                example: "mycert.crt"
+                minLength: 0
+                maxLength: 255
+            sslkey:
+                type: string
+                description: SSL key file name
+                example: "mycert.key"
+                minLength: 0
                 maxLength: 255
 
     NewItem:
@@ -1142,9 +1149,15 @@ definitions:
                 description: Redirect had SSL cert
             sslcert:
                 type: string
-                description: Directory of SSL cert
-                example: "data/cit3gxhqh00007aruv60es3XX/certs/siteuuid-sdlkslkj/certuuid-09sdhsdojhsd"
-                minLength: 1
+                description: SSL cert file name
+                example: "mycert.crt"
+                minLength: 0
+                maxLength: 255
+            sslkey:
+                type: string
+                description: SSL key file name
+                example: "mycert.key"
+                minLength: 0
                 maxLength: 255
             _cuid:
                 type: string
