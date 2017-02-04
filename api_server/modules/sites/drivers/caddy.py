@@ -134,6 +134,8 @@ class SitesConf():
         variables['ssl'] = ''
         variables['sslcert'] = ''
         variables['name'] = '{0}.{1}:80'.format(site['_cuid'], variables['domain'])
+        if not site['urlprefix'] == site['_cuid']:
+            variables['name'] += ' ' + '{0}.{1}:80'.format(site['urlprefix'], variables['domain'])
         variables['certpath'] = ''        
         variables['dir'] = self._params['datadir'] + '/' + site['active_dir']
         data = template.render(variables)
