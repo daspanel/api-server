@@ -68,6 +68,15 @@ class SiteModel(TinyJsonModel):
                 if v['domain'] == domain and v['hosturl'] == host:
                     return True, rec['_cuid']
         return False, None
+
+    @classmethod
+    def urlprefix_used(cls, prefix):
+        table = cls.Meta.database.table(cls.__tablename__)
+        allrec = table.all()
+        for rec in allrec:
+            if rec['urlprefix'] == prefix:
+                return True, rec['_cuid']
+        return False, None
         
     class Meta:
         database = SITES_DB

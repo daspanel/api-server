@@ -353,6 +353,10 @@ def edit_item(cuid, bdata):
         rec2edit = SiteModel.get(cuid=cuid)
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
+    result, site_id = rec2edit.urlprefix_used(bdata["urlprefix"])
+    if result:
+        return api_fail(SITES_ERRORS, 'URLPREFIXEXIST', bdata["urlprefix"], site_id)
+
     rec2edit.sitedescription = bdata["sitedescription"]
     rec2edit.sitetype = bdata["sitetype"]
     rec2edit.runtime = bdata["runtime"]
