@@ -119,6 +119,10 @@ class SitesConf():
             print("Processing host: " + host['hosturl'] + '.' + host['domain'])
             tmplresult = tmplresult + self.generate_redirect(host=host, site=site, template=template_obj)
 
+        for version in site['versions']:
+            print("Processing version: " + version['description'])
+            tmplresult = tmplresult + self.generate_version(version=version, site=site, template=template_obj)
+
         # Generate default dir of the site
         tmplresult = tmplresult + self.generate_subdomain(site=site, template=template_obj)
 
@@ -126,6 +130,25 @@ class SitesConf():
         print("Saving site '%s' caddy conf to: %s" % (site['_cuid'], filepath))
         self.fs.write_file(filepath=filepath, contents=tmplresult)
         return True, ""
+
+    def generate_version(self, version, site, template):
+        variables = {}
+        variables['sitetype'] = site['sitetype']
+        variables['domain'] = 'sites.' + CONFIG.daspanel.host
+        variables['ssl'] = ''
+        variables['sslcert'] = ''
+        variables['name'] = '{0}.v.{1}.{2}:80'.format(
+            version['_cuid'], site['_cuid'], variables['domain']
+        )
+        if not site['urlprefix'] == site['_cuid']:
+            variables['name'] += ' ' + '{0}.v.{1}.{2}:80'.format(
+                version['_cuid'], site['urlprefix'], variables['domain']
+            )
+
+        variables['certpath'] = ''
+        variables['dir'] = self._params['datadir'] + '/' + version['directory']
+        data = template.render(variables)
+        return data.decode('utf-8')
 
     def generate_subdomain(self, site, template):
         variables = {}
@@ -136,7 +159,7 @@ class SitesConf():
         variables['name'] = '{0}.{1}:80'.format(site['_cuid'], variables['domain'])
         if not site['urlprefix'] == site['_cuid']:
             variables['name'] += ' ' + '{0}.{1}:80'.format(site['urlprefix'], variables['domain'])
-        variables['certpath'] = ''        
+        variables['certpath'] = ''
         variables['dir'] = self._params['datadir'] + '/' + site['active_dir']
         data = template.render(variables)
         return data.decode('utf-8')
