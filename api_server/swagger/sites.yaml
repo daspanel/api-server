@@ -839,12 +839,19 @@ definitions:
     ZipContent:
         type: object
         required:
+            - version
             - url
             - auth_type
             - user
             - password
             - directory
         properties:
+            version:
+                type: string
+                description: Universal unique id of the version
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
             url:
                 type: string
                 description: Complete url from where download the file

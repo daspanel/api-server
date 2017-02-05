@@ -30,7 +30,7 @@ from .errors import SITES_ERRORS
 from connexion import NoContent, request
 from daspanel_connexion_utils import api_fail
 
-def install_remotezip(cuid, bdata):
+def     install_remotezip(cuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
@@ -39,6 +39,16 @@ def install_remotezip(cuid, bdata):
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
     print(bdata)
+    versions = site.to_struct()['versions']
+    vedit = -1
+    site_dest = {}
+    for i, v in enumerate(versions):
+        if v['_cuid'] == bdata['version']:
+            vedit = i
+            site_dest = v
+            break
+    if vedit == -1:
+        return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', bdata['version'])
 
     content_id = UuidGen().gen_uniqid()
     tmp_file = 'upload/tmp/{0}.zip'.format(content_id)
@@ -69,8 +79,8 @@ def install_remotezip(cuid, bdata):
             fs.rmtree(tmp_dir)
             return api_fail(SITES_ERRORS, 'CONTENTWITHOUTINDEX', bdata['url'])
 
-        print ('Copying from: ', content_root, 'To: ', site.active_dir)
-        fs.copy_tree(content_root, site.active_dir)
+        print ('Copying from: ', content_root, 'To: ', site_dest['directory'] + '/' + bdata['directory'])
+        fs.copy_tree(content_root, site_dest['directory'] + '/' + bdata['directory'])
         fs.rmtree(tmp_dir)
 
     else:
