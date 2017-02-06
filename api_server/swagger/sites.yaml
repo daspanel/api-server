@@ -183,7 +183,7 @@ paths:
                   in: body
                   required: true
                   schema:
-                        $ref: '#/definitions/EditItem'
+                        $ref: '#/definitions/EditSite'
             responses:
                 200:
                     $ref: '#/responses/Success'
@@ -901,32 +901,18 @@ definitions:
                 example: "#some2019good@d#"
                 minLength: 8
                 maxLength: 16
-    EditItem:
+    EditSite:
         type: object
         required:
-            - sitetype
             - sitedescription
-            - runtime
             - urlprefix
         properties:
-            sitetype:
-                type: string
-                description: Site type
-                example: "wordpress-4.5"
-                minLength: 1
-                maxLength: 64
             sitedescription:
                 type: string
                 description: Site name
-                example: "My new site"
+                example: "My site description"
                 minLength: 1
                 maxLength: 255
-            runtime:
-                type: string
-                description: Runtime/interpreter used in the site
-                example: "php56"
-                minLength: 1
-                maxLength: 64
             urlprefix:
                 type: string
                 description: Url prefix for the site
@@ -939,6 +925,8 @@ definitions:
         required:
             - description
             - tag
+            - sitetype
+            - runtime
         properties:
             description:
                 type: string
@@ -952,6 +940,18 @@ definitions:
                 example: "0.1.1"
                 minLength: 1
                 maxLength: 255
+            sitetype:
+                type: string
+                description: Site type
+                example: "wordpress-4.5"
+                minLength: 1
+                maxLength: 64
+            runtime:
+                type: string
+                description: Runtime/interpreter used in the site
+                example: "php56"
+                minLength: 1
+                maxLength: 64
     NewRedirectItem:
         type: object
         required:
@@ -1126,6 +1126,18 @@ definitions:
                 example: "data/cit3gxhqh00007aruv60es3XX/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
                 minLength: 1
                 maxLength: 255
+            sitetype:
+                type: string
+                description: Site type
+                example: "wordpress-4.5"
+                minLength: 1
+                maxLength: 64
+            runtime:
+                type: string
+                description: Runtime/interpreter used in the site
+                example: "php56"
+                minLength: 1
+                maxLength: 64
             _cuid:
                 type: string
                 description: Universal unique id of the site version

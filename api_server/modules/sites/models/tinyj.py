@@ -20,6 +20,8 @@ class SiteVersion(TinyJsonModel):
     tag = fields.StringField(required=True, validators=[validators.Length(1, 255)])
     date = fields.DateTimeField(required=True)
     directory = fields.StringField(required=True, validators=[validators.Length(1, 255)])
+    sitetype = fields.StringField(required=False, validators=[validators.Length(0, 64)])
+    runtime = fields.StringField(required=False, validators=[validators.Length(0, 64)])
 
 
 class SiteRedirects(TinyJsonModel):

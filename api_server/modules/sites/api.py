@@ -202,6 +202,9 @@ def versions_edit_item(cuid, vcuid, bdata):
         return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', vcuid)
     versions[vedit]['description'] = bdata['description']
     versions[vedit]['tag'] = bdata['tag']
+    versions[vedit]['sitetype'] = bdata["sitetype"]
+    versions[vedit]['runtime'] = bdata["runtime"]
+
     site.versions = versions
     site._last_update = datetime.utcnow()
     site.validate()
@@ -330,6 +333,8 @@ def new_item(bdata):
     newver.date = newrec._created_at
     newver.description = 'Initial version'
     newver.tag = '0.1.0'
+    newver.sitetype = bdata['sitetype']
+    newver.runtime = bdata['runtime']
     newver.directory = 'content/' + newrec._cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
     newver.validate()
     newrec.versions = [newver]
@@ -354,12 +359,10 @@ def edit_item(cuid, bdata):
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
     result, site_id = rec2edit.urlprefix_used(bdata["urlprefix"])
-    if result:
+    if result and (not cuid == site_id):
         return api_fail(SITES_ERRORS, 'URLPREFIXEXIST', bdata["urlprefix"], site_id)
 
     rec2edit.sitedescription = bdata["sitedescription"]
-    rec2edit.sitetype = bdata["sitetype"]
-    rec2edit.runtime = bdata["runtime"]
     rec2edit.urlprefix = bdata["urlprefix"]
     rec2edit._last_update = datetime.utcnow()
     rec2edit.validate()
