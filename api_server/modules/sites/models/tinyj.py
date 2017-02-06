@@ -36,9 +36,9 @@ class SiteRedirects(TinyJsonModel):
 class SiteModel(TinyJsonModel):
     __tablename__ = "sites"
     urlprefix = fields.StringField(required=True, validators=[validators.Length(1, 255)])
-    sitetype = fields.StringField(required=True, validators=[validators.Length(1, 64)])
+    #sitetype = fields.StringField(required=True, validators=[validators.Length(1, 64)])
     sitedescription = fields.StringField(required=True, validators=[validators.Length(1, 255)])
-    runtime = fields.StringField(required=True, validators=[validators.Length(1, 64)])
+    #runtime = fields.StringField(required=True, validators=[validators.Length(1, 64)])
     versions = fields.ListField(['SiteVersion'])
     redirects = fields.ListField(['SiteRedirects'])
     active_version = fields.StringField(required=True, validators=[validators.Length(1, 25)])
