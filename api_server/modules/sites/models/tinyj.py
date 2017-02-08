@@ -31,7 +31,7 @@ class SiteRedirects(TinyJsonModel):
     ssl = fields.BoolField(required=True)
     sslcert = fields.StringField(required=False, validators=[validators.Length(0, 255)])
     sslkey = fields.StringField(required=False, validators=[validators.Length(0, 255)])
-
+    version = fields.StringField(required=True, validators=[validators.Length(25, 25)])
 
 class SiteModel(TinyJsonModel):
     __tablename__ = "sites"
@@ -41,7 +41,7 @@ class SiteModel(TinyJsonModel):
     #runtime = fields.StringField(required=True, validators=[validators.Length(1, 64)])
     versions = fields.ListField(['SiteVersion'])
     redirects = fields.ListField(['SiteRedirects'])
-    active_version = fields.StringField(required=True, validators=[validators.Length(1, 25)])
+    active_version = fields.StringField(required=True, validators=[validators.Length(25, 25)])
     active_dir = fields.StringField(required=True, validators=[validators.Length(1, 255)])
     _last_update = fields.DateTimeField(required=True)
     _created_at = fields.DateTimeField(required=True)
@@ -52,6 +52,13 @@ class SiteModel(TinyJsonModel):
         #if 'db' in kwargs:
         #    self.Meta.database = kwargs['db']
         super(SiteModel, self).__init__(*args, **kwargs)
+
+    def version_exist(self, version):
+        records = self.to_struct()['versions']
+        for i, v in enumerate(records):
+            if v['_cuid'] == version:
+                return True
+        return False
 
     def redirectexist(self, domain, host):
         records = self.to_struct()['redirects']

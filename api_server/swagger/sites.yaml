@@ -798,7 +798,6 @@ parameters:
         type: string
         required: true
         pattern: "^[a-zA-Z0-9-]+$"
-
     cuid:
         name: cuid
         description: Item Universal unique identifier
@@ -960,6 +959,7 @@ definitions:
             - ssl
             - sslcert
             - sslkey
+            - version
         properties:
             hosturl:
                 type: string
@@ -989,6 +989,13 @@ definitions:
                 example: "mycert.key"
                 minLength: 0
                 maxLength: 255
+            version:
+                type: string
+                description: Active version of the redirect
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                pattern: "^[a-zA-Z0-9-]+$"
 
     NewItem:
         type: object
@@ -1018,8 +1025,6 @@ definitions:
     Item:
         type: object
         required:
-            - sitetype
-            - runtime
             - sitedescription
             - urlprefix
         properties:
@@ -1042,24 +1047,12 @@ definitions:
                 minLength: 25
                 maxLength: 25
                 readOnly: true
-            sitetype:
-                type: string
-                description: Site type
-                example: "wordpress-4.5"
-                minLength: 1
-                maxLength: 64
             sitedescription:
                 type: string
                 description: Site name
                 example: "My new site"
                 minLength: 1
                 maxLength: 255
-            runtime:
-                type: string
-                description: Runtime/interpreter used in the site
-                example: "php56"
-                minLength: 1
-                maxLength: 64
             urlprefix:
                 type: string
                 description: Url prefix for the site
@@ -1189,6 +1182,13 @@ definitions:
                 minLength: 25
                 maxLength: 25
                 readOnly: true
+            version:
+                type: string
+                description: Active version of the redirect
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                pattern: "^[a-zA-Z0-9-]+$"
 
     Message:
         type: object

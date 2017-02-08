@@ -56,6 +56,9 @@ def redirects_edit_item(cuid, rcuid, bdata):
         site = SiteModel.get(cuid=cuid)
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
+    if not site.version_exist(bdata['version']):
+        return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', bdata['version'], site_id)
+
     redirects = site.to_struct()['redirects']
     vedit = -1
     for i, v in enumerate(redirects):
@@ -69,6 +72,7 @@ def redirects_edit_item(cuid, rcuid, bdata):
     redirects[vedit]['domain'] = bdata['domain']
     redirects[vedit]['ssl'] = bdata['ssl']
     redirects[vedit]['sslcert'] = bdata['sslcert']
+    redirects[vedit]['version'] = bdata['version']
     site.redirects = redirects
     site._last_update = datetime.utcnow()
     site.validate()
@@ -107,7 +111,8 @@ def redirects_new_item(cuid, bdata):
         site = SiteModel.get(cuid=cuid)
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
-    #if site.redirectexist(bdata['domain'], bdata['hosturl']):
+    if not site.version_exist(bdata['version']):
+        return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', bdata['version'], site_id)
     result, site_id = site.redirected_used(bdata['domain'], bdata['hosturl'])
     if result:
         return api_fail(SITES_ERRORS, 'REDIRECTEXISTS', bdata['hosturl'], bdata['domain'], site_id)

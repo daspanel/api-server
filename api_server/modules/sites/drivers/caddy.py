@@ -113,6 +113,41 @@ class SitesConf():
                 #return False, "{0}".format(template)
         return template_obj
 
+    def get_version_template(self, site_versions, version):
+        template_obj = None
+
+        # Get info about version of the site
+        vindex = -1
+        #site_versions = site['versions']
+        for i, v in enumerate(site_versions):
+            if v['_cuid'] == version:
+                vindex = i
+                break
+        if vindex == -1:
+            return None
+        sitetype = site_versions[vindex]['sitetype']
+        runtime = site_versions[vindex]['runtime']
+
+        template = "{0}-{1}.template".format(sitetype, runtime)
+        template_file = "{0}/{1}".format(self.templatesdir, template)
+        tenant_template_file = "/conf-templates/caddy/etc/caddy/sites-templates/{0}".format(template)
+        print("TEMPLATE={0}".format(template))
+        print("SYSTEM TEMPLATE FILE: {0}".format(template_file))
+        print("TENANT TEMPLATE FILE: {0}{1}".format(self.tenant_templatesdir, template))
+        #https://github.com/veselosky/jinja2_s3loader
+
+        if (self.fs.isfile(tenant_template_file)):
+            template_obj = self.tenant_templates.get_template(template)
+            print("USING TENANT TEMPLATE")
+        else:
+            if (os.path.isfile(template_file)):
+                template_obj = self.templates.get_template(template)
+                print("USING SYSTEM TEMPLATE")
+            else:
+                print("Error1: template not found: {0} or {1}".format(template_file, tenant_template_file))
+                #return False, "{0}".format(template)
+        return template_obj
+
     def generate(self, site):
         tmplresult = ''
 
@@ -129,27 +164,30 @@ class SitesConf():
         print('Generating site using version: ', active_version)
 
         # Get template for the current active version of the site
-        template_obj = self.get_template(active_version['sitetype'], active_version['runtime'])
+        #template_obj = self.get_template(active_version['sitetype'], active_version['runtime'])
+        template_obj = self.get_version_template(site['versions'], site['active_version'])
         if template_obj == None:
             return False, "Template not found for {0} {1}".format(active_version['sitetype'], active_version['runtime'])
 
         # Generate default conf of the site
         tmplresult = tmplresult + self.generate_subdomain(site=site, template=template_obj)
 
-        # Generate conf for each redirect using default version of the site
+        # Generate conf for each redirect using version assigned to it
         for host in site['redirects']:
             print("Processing host: " + host['hosturl'] + '.' + host['domain'])
+            template_obj = self.get_version_template(site['versions'], host['version'])
+            if template_obj == None:
+                return False, "Template not found for redirect {0}.{1}".format(host['hosturl'], host['domain'])
             tmplresult = tmplresult + self.generate_redirect(host=host, site=site, template=template_obj)
 
         # Generate conf for each version of the site
         for version in site['versions']:
             print("Processing version: " + version['description'])
-            template_obj = self.get_template(version['sitetype'], version['runtime'])
+            template_obj = self.get_version_template(site['versions'], version['_cuid'])
             if template_obj == None:
                 return False, "Template not found for vesion {0}: {1} {2}".format(
                     version['_cuid'], version['sitetype'], version['runtime']
                 )
-
             tmplresult = tmplresult + self.generate_version(version=version, site=site, template=template_obj)
 
         filepath = self.sitesavailabledir + '/' + site['_cuid'] + '.conf'
@@ -159,7 +197,7 @@ class SitesConf():
 
     def generate_version(self, version, site, template):
         variables = {}
-        variables['sitetype'] = site['sitetype']
+        variables['sitetype'] = 'Version {0}'.format(version['description'])
         variables['domain'] = 'sites.' + CONFIG.daspanel.host
         variables['ssl'] = ''
         variables['sslcert'] = ''
@@ -178,7 +216,7 @@ class SitesConf():
 
     def generate_subdomain(self, site, template):
         variables = {}
-        variables['sitetype'] = site['sitetype']
+        variables['sitetype'] = 'Default URL'
         variables['domain'] = 'sites.' + CONFIG.daspanel.host
         variables['ssl'] = ''
         variables['sslcert'] = ''
@@ -193,7 +231,7 @@ class SitesConf():
     def generate_redirect(self, host, site, template):
         print(host)
         variables = {}
-        variables['sitetype'] = site['sitetype']
+        variables['sitetype'] = 'Redirect {0}.{1}'.format(host['hosturl'], host['domain'])
         variables['domain'] = host['domain']
         variables['ssl'] = host['ssl']
         variables['sslcert'] = host['sslcert']
