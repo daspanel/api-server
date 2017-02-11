@@ -25,6 +25,8 @@ celery/tests/cover/
 .ve*
 cover/
 .vagrant/
-container_data/
 *.dev.env
+Docker/local/buildlog.txt
+Docker/local/Dockerfile
+Docker/local/rootfs/
 

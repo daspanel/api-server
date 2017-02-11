@@ -1,0 +1,30 @@
+FROM daspanel/python2.7-gunicorn
+
+# Parse arguments for the build command.
+ARG VERSION
+ARG VCS_URL
+ARG VCS_REF
+ARG BUILD_DATE
+
+# A little bit of metadata management.
+# See http://label-schema.org/
+LABEL org.label-schema.schema-version="1.0" \
+      org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.vendor="DASPANEL" \
+      org.label-schema.version=$VERSION \
+      org.label-schema.vcs-url=$VCS_URL \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.name="base-api" \
+      org.label-schema.description="This service provides a Daspanel api server platform." \
+      org.label-schema.architecture="x86_64" \
+      org.label-schema.distribution="Alpine Linux" \
+      org.label-schema.distribution-version="3.4" \
+      info.daspanel.apiserver=$VERSION
+
+
+EXPOSE 8080
+
+# Volumes
+# - Conf: /etc/php/ (php-fpm.conf, php.ini)
+# - Logs: /var/log/php
+# - Data: /srv/www, /var/lib/php/session
