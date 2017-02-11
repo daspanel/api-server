@@ -74,15 +74,12 @@ services:
             - daspanel.dev.env
             - smtp.dev.env
     daspanel-api:
-        build:
-            context: Docker
-            dockerfile: Dockerfile.dev
-        image: daspanel/api-dev
+        image: daspanel/api:dev
         volumes:
             #- daspanel-data-dev:/opt/daspanel/data
             - daspanel-data-dev:/opt/daspanel/data
             - .:/opt/daspanel/apps/apiserver
-            - /home/abner/Devel/abnerjacobsen/python/daspanelweb:/opt/daspanel/apps/daspanelweb
+            - ./container_data/opt/daspanel/conf-templates:/opt/daspanel/conf-templates
         networks:
             - frontend
             - backend
@@ -95,7 +92,6 @@ services:
             - daspanel.dev.env
             - smtp.dev.env
         expose:
-            - "5000"
             - "8080"
 
 volumes:
