@@ -74,7 +74,7 @@ services:
             - daspanel.dev.env
             - smtp.dev.env
     daspanel-api:
-        image: daspanel/api:dev
+        image: daspanel/api:0.1.0-dev
         volumes:
             #- daspanel-data-dev:/opt/daspanel/data
             - daspanel-data-dev:/opt/daspanel/data

@@ -1,3 +1,6 @@
+# Determine this makefile's path.
+# Be sure to place this BEFORE `include` directives, if any.
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
 PROJ=api_server
 PGPIDENT="admindaspanel"
@@ -22,6 +25,28 @@ SPHINX_HTMLDIR="${SPHINX_BUILDDIR}/html"
 DOCUMENTATION=Documentation
 FLAKEPLUSTARGET=2.7
 
+# Docker specific
+# Based on https://github.com/UN-OCHA/docker-images
+# The DockerHub repository name.
+# This will also be used as the organisation tag in the image.
+ORGANISATION=daspanel
+IMAGE=api-server
+
+# Miscellaneous utilities used by the build scripts.
+AWK=awk
+DOCKER=docker
+ECHO=echo
+GREP=grep -E
+MAKE=make
+RM=rm
+SED=sed
+CP=cp
+MKDIR=mkdir
+
+# Initialise empty variables.
+VERSION := latest
+EXTRAVERSION := -dev
+
 all: help
 
 help:
@@ -45,6 +70,11 @@ help:
 	@echo "    clean-pyc        - Remove .pyc/__pycache__ files"
 	@echo "    clean-docs       - Remove documentation build artifacts."
 	@echo "    clean-build      - Remove setup artifacts."
+	@echo "docker-file -------- - Create default Dockerfile."
+	@echo "docker ------------- - Create docker image."
+	@echo "  docker-clean------ - Clean docker build info."
+	@echo "  docker-tag-------- - Tag last built docker image."
+	@echo "docker-clean-images  - Clean all images from last buildlog.txt."
 
 clean: clean-docs clean-pyc clean-build
 
@@ -133,3 +163,42 @@ build:
 distcheck: lint test clean
 
 dist: readme contrib clean-dist build
+
+# DOCKER specific
+# Common build targets.
+#docker: docker-clean docker-template
+docker: clean-pyc docker-clean
+	$(DOCKER) build \
+		--build-arg VCS_REF=`git rev-parse --short HEAD` \
+		--build-arg VCS_URL=`git config --get remote.origin.url | sed 's#git@github.com:#https://github.com/#'` \
+		--build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
+		--build-arg VERSION=$(VERSION) \
+		. | tee buildlog.txt
+	@$(MAKE) -f $(THIS_FILE) docker-tag # invoke other target
+
+# Create a Dockerfile from the template.
+docker-file:
+	@$(ECHO) "Generating a Dockerfile for version $(VERSION)"
+	@$(SED) "s/%%VERSION%%/$(VERSION)/" < Docker/default/Dockerfile.tmpl > Dockerfile
+
+# Tag the image with our organisation, name and version.
+docker-tag:
+	@$(ECHO) "Tagging the built image."
+	$(eval IMAGE_HASH=$(shell tail -n 1 buildlog.txt | $(AWK) '{print $$NF}'))
+	$(DOCKER) tag $(IMAGE_HASH) $(ORGANISATION)/$(IMAGE):$(VERSION)$(EXTRAVERSION)
+
+# Remove the buildlog.
+docker-clean:
+	$(RM) -f buildlog.txt
+
+# Push the tagged image to DockerHub.
+docker-push:
+	$(DOCKER) push $(ORGANISATION)/$(IMAGE):$(VERSION)$(EXTRAVERSION)
+
+# Remove intermediate images.
+docker-clean-images:
+	@echo Clean up intemediate images.
+	for i in `$(GREP) '^ ---> ([a-z0-9]){12}$$' buildlog.txt | $(AWK) '{print $$2}'`; do \
+		$(DOCKER) rmi -f $$i; \
+	done
+
