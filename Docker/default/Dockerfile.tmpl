@@ -27,7 +27,7 @@ RUN mkdir -p $INSTALL_PATH
 
 # Inject files in container file system
 COPY container_data /
-COPY api_server /opt/daspanel/apps/apiserver
+COPY api_server /opt/daspanel/apps/apiserver/api_server
 COPY requirements /opt/daspanel/apps/apiserver/requirements
 
 WORKDIR $INSTALL_PATH
