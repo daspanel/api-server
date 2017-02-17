@@ -17,6 +17,11 @@
     root {{ dir }}
     gzip
     tls off
+
+    ratelimit /wp-login.php 5 7 minute
+    # Protect secrets against misconfiguration.
+    #internal /wp-config.php
+
     fastcgi / daspanel-php-fpm-7.0:9000 php
     rewrite {
         if {path} not_match ^\/wp-admin
