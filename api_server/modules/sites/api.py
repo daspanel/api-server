@@ -177,6 +177,8 @@ def versions_clone(cuid, vcuid):
     newver.description = 'Clone of version: ' + versions[vedit]['description']
     newver.tag = '0.1.0'
     newver.directory = 'content/' + cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
+    newver.sitetype = versions[vedit]["sitetype"]
+    newver.runtime = versions[vedit]["runtime"]
     newver.validate()
     site.versions.append(newver)
     site._last_update = datetime.utcnow()
