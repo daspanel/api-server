@@ -2,6 +2,9 @@
 # Be sure to place this BEFORE `include` directives, if any.
 THIS_FILE := $(lastword $(MAKEFILE_LIST))
 
+# Customize your project settings in this file.  
+include ./make-project-settings.mk
+
 PROJ=api_server
 PGPIDENT="admindaspanel"
 PYTHON=python
@@ -28,9 +31,13 @@ FLAKEPLUSTARGET=2.7
 # Docker specific
 # Based on https://github.com/UN-OCHA/docker-images
 # The DockerHub repository name.
-# This will also be used as the organisation tag in the image.
-ORGANISATION=daspanel
-IMAGE=api-server
+# This will also be used as the GITHUB_ORG tag in the image.
+#ORGANISATION=daspanel
+#IMAGE=api-server
+
+# Initialise empty variables.
+VERSION := latest
+EXTRAVERSION := -dev
 
 # Miscellaneous utilities used by the build scripts.
 AWK=awk
@@ -42,10 +49,6 @@ RM=rm
 SED=sed
 CP=cp
 MKDIR=mkdir
-
-# Initialise empty variables.
-VERSION := latest
-EXTRAVERSION := -dev
 
 all: help
 
@@ -72,8 +75,8 @@ help:
 	@echo "    clean-build      - Remove setup artifacts."
 	@echo "docker-file -------- - Create default Dockerfile."
 	@echo "docker ------------- - Create docker image."
-	@echo "  docker-clean------ - Clean docker build info."
-	@echo "  docker-tag-------- - Tag last built docker image."
+	@echo "  docker-clean       - Clean docker build info."
+	@echo "  docker-tag         - Tag last built docker image."
 	@echo "docker-clean-images  - Clean all images from last buildlog.txt."
 
 clean: clean-docs clean-pyc clean-build
@@ -185,7 +188,7 @@ docker-file:
 docker-tag:
 	@$(ECHO) "Tagging the built image."
 	$(eval IMAGE_HASH=$(shell tail -n 1 buildlog.txt | $(AWK) '{print $$NF}'))
-	$(DOCKER) tag $(IMAGE_HASH) $(ORGANISATION)/$(IMAGE):$(VERSION)$(EXTRAVERSION)
+	$(DOCKER) tag $(IMAGE_HASH) $(GITHUB_ORG)/$(IMAGE):$(VERSION)$(EXTRAVERSION)
 
 # Remove the buildlog.
 docker-clean:
@@ -193,7 +196,7 @@ docker-clean:
 
 # Push the tagged image to DockerHub.
 docker-push:
-	$(DOCKER) push $(ORGANISATION)/$(IMAGE):$(VERSION)$(EXTRAVERSION)
+	$(DOCKER) push $(GITHUB_ORG)/$(IMAGE):$(VERSION)$(EXTRAVERSION)
 
 # Remove intermediate images.
 docker-clean-images:
