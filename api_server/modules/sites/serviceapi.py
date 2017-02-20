@@ -72,6 +72,24 @@ def httpserver_activate(cuid, servertype):
     else:
         return api_fail(SITES_ERRORS, 'SITEACTIVATIONERROR', result, servertype)
 
+def httpserver_delete(cuid, servertype):
+    tenant = request.headers['Authorization']
+    if not tenant == os.environ['DASPANEL_GUUID']:
+        return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    try:
+        site = SiteModel.get(cuid=cuid)
+    except:
+        return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
+    if (not CONFIG.sites.drivers.plugin_exist(servertype)):
+        return api_fail(SITES_ERRORS, 'MISSINGDRIVER', servertype)
+
+    driver =  CONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
+    status, result = driver.delete(site.to_struct())
+    if status:
+        return NoContent, 204
+    else:
+        return api_fail(SITES_ERRORS, 'SITECFGDELERROR', result, servertype)
+
 def httpserver_gencfg(cuid, servertype):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_GUUID']:

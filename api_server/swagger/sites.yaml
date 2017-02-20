@@ -281,6 +281,33 @@ paths:
                     $ref: '#/responses/500InternalServerError'
                 503:
                     $ref: '#/responses/503ServiceUnavailable'
+    /service/{servertype}/delconfig/{cuid}:
+        get:
+            tags: [Servers]
+            operationId: modules.sites.serviceapi.httpserver_delete
+            summary: Delete site configuration in HTTP server app
+            description: |
+                This delete site configuration in HTTP server app.
+            parameters:
+                - $ref: '#/parameters/cuid'
+                - $ref: '#/parameters/servertype'
+            responses:
+                204:
+                    $ref: '#/responses/Success'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
     /service/{servertype}/deactivate/{cuid}:
         get:
             tags: [Servers]

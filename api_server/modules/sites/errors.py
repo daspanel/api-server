@@ -39,6 +39,8 @@ SITES_ERRORS = {
         'Error in site activaction: {0} for {1}', error_doc),
     'SITEDESACTIVATIONERROR': ApiErrorMsgType(403, 'Error in site desactivaction', 
         'Error in site desactivaction: {0} for {1}', error_doc),
+    'SITECFGDELERROR': ApiErrorMsgType(403, 'Error in site configuration delete', 
+        'Error in site configuration delete: {0} for {1}', error_doc),
     'VERSIONISACTIVE': ApiErrorMsgType(403, 'This version is active', 
         'This version is active: {0} site {1}', error_doc),
     'URLPREFIXEXIST': ApiErrorMsgType(400, 'URL prefix exist', 

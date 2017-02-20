@@ -68,6 +68,28 @@ class SitesConf():
         else:
             return False, "Site not active"
 
+    def delete(self, site):
+        filepath = self.sitesavailabledir + '/' + site['_cuid'] + '.conf'
+        avfilepath = self.sitesavailabledir + '/' + site['_cuid'] + '.conf'
+        enfilepath = self.sitesenableddir + '/' + site['_cuid'] + '.conf'
+        print('avfilepath: ', avfilepath)
+        print('enfilepath: ', enfilepath)
+        if self.fs.exists(enfilepath):
+            return False, "Site configuration is active on the HTTP server."
+        if self.fs.isfile(avfilepath):
+            try:
+                self.fs.remove(avfilepath)
+            except OSError as e:
+                if e.errno != errno.ENOENT:
+                    print('delete OSError: ', e)
+                return False, "Filesystem error"
+            return True, ""
+        else:
+            print("File not exist: " + avfilepath)
+            return False, "Site dont have configuration."
+        print("Site config deleted")
+        return True, ""
+
     def activate(self, site):
         filepath = self.sitesavailabledir + '/' + site['_cuid'] + '.conf'
         avfilepath = self.sitesavailabledir + '/' + site['_cuid'] + '.conf'
