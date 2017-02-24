@@ -200,10 +200,10 @@ class SitesConf():
             template_obj = self.get_version_template(site['versions'], host['version'])
             if template_obj == None:
                 return False, "Template not found for redirect {0}.{1}".format(host['hosturl'], host['domain'])
-            version_dir = next((item for item in site['versions'] if item.get("_cuid") == host['version']), None)
-            if version_dir == None:
+            redir_version = next((item for item in site['versions'] if item.get("_cuid") == host['version']), None)
+            if redir_version == None:
                 return False, "Not found directory of version {0}".format(host['version'])
-            tmplresult = tmplresult + self.generate_redirect(host=host, site=site, template=template_obj, version_dir=version_dir)
+            tmplresult = tmplresult + self.generate_redirect(host=host, site=site, template=template_obj, version=redir_version)
 
         # Generate conf for each version of the site
         for version in site['versions']:
@@ -253,8 +253,9 @@ class SitesConf():
         data = template.render(variables)
         return data.decode('utf-8')
 
-    def generate_redirect(self, host, site, template, version_dir):
+    def generate_redirect(self, host, site, template, version):
         print(host)
+        print(version)
         variables = {}
         variables['sitetype'] = 'Redirect {0}.{1}'.format(host['hosturl'], host['domain'])
         variables['domain'] = host['domain']
@@ -267,7 +268,7 @@ class SitesConf():
             variables['certpath'] = self.certspath        
         else:
             variables['certpath'] = self.certspath + '/' + host['hosturl'] + '.' + host['domain']
-        variables['dir'] = self._params['datadir'] + '/' + version_dir
+        variables['dir'] = self._params['datadir'] + '/' + version['directory']
         data = template.render(variables)
         return data.decode('utf-8')
 
