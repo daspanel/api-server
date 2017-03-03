@@ -99,4 +99,5 @@ echo "daspanel-api: Sending setup info email to $DASPANEL_MASTER_EMAIL"
     echo ""; 
     echo ""; 
 } | ssmtp $DASPANEL_MASTER_EMAIL
+exit 0
 
