@@ -60,9 +60,9 @@ DEF_GUNICORN_CFG['loglevel'] = 'info'
 # where to store the PID file:
 DEF_GUNICORN_CFG['pidfile'] = '/var/run/api_server.pid'
 
-# Defaults is 30.  This is how long the master will wait to hear from a worker
+# Defaults is 360.  This is how long the master will wait to hear from a worker
 # before killing it.  Can set higher if there are some longer running requests:
-DEF_GUNICORN_CFG['timeout'] = 30
+DEF_GUNICORN_CFG['timeout'] = 360
 
 # only use True for development:
 DEF_GUNICORN_CFG['reload'] = False
