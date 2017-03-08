@@ -25,10 +25,8 @@ if [ -z "$DASPANEL_GUUID" ]; then
 fi
 
 # unless this has already been defined, set
-if [ -z "$DASPANEL_DOMAIN" ]; then
-    export DASPANEL_URL="http://api.daspanel.site:5000"
-    export DASPANEL_API_URL="http://api.daspanel.site:5000/1.0/sites/"
-    export DASPANEL_API_DOCS="http://api.daspanel.site:5000/1.0/sites/ui/"
+if [ -z "$DASPANEL_HOST" ]; then
+    export DASPANEL_HOST="daspanel.site"
 fi
 
 if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/containers" ]; then
@@ -76,6 +74,10 @@ if [ ! -d "/opt/daspanel/log/$DASPANEL_GUUID/apiserver" ]; then
 fi
 
 # Send email with instance info
+export DASPANEL_URL="http://api.$DASPANEL_HOST"
+export DASPANEL_API_URL="http://api.$DASPANEL_HOST/1.0/sites/"
+export DASPANEL_API_DOCS="http://api.$DASPANEL_HOST/1.0/sites/ui/"
+
 echo "daspanel-api: Sending setup info email to $DASPANEL_MASTER_EMAIL"
 { 
     echo "To: $DASPANEL_MASTER_EMAIL"; 
@@ -95,6 +97,12 @@ echo "daspanel-api: Sending setup info email to $DASPANEL_MASTER_EMAIL"
     if [ -f /opt/daspanel/data/$DASPANEL_GUUID/containers/mysql.configured ]; then
         echo "*** MYSQL CONFIG ***";
         echo "$(cat /opt/daspanel/data/$DASPANEL_GUUID/containers/mysql.configured)";
+    fi
+    echo ""; 
+    echo "";
+    if [ -f /opt/daspanel/data/$DASPANEL_GUUID/containers/s3.configured ]; then
+        echo "*** S3 CONFIG ***";
+        echo "$(cat /opt/daspanel/data/$DASPANEL_GUUID/containers/s3.configured)";
     fi
     echo ""; 
     echo ""; 
