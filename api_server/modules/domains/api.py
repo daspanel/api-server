@@ -13,7 +13,7 @@ from connexion import NoContent, request
 
 def get_item(cuid):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     try:
         rec = DomainModel.get(cuid=cuid)
@@ -23,14 +23,14 @@ def get_item(cuid):
 
 def get_all():
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     all_rows = DomainModel.all()
     return [rec.to_struct() for rec in all_rows]
 
 def new_item(bdata):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     if DomainModel.domainexist(bdata['domain']):
         return {"message": "Domain already exist in database: {0}".format(bdata['domain'])}, 401
@@ -43,7 +43,7 @@ def new_item(bdata):
 
 def edit_item(cuid, bdata):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     try:
         rec2edit = DomainModel.get(cuid=cuid)
@@ -56,7 +56,7 @@ def edit_item(cuid, bdata):
     
 def delete_item(cuid):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     try:
         rec2delete = DomainModel.get(cuid=cuid)

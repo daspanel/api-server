@@ -40,7 +40,7 @@ class ConfigSection(object):
 
 
 daspanel = ConfigSection("DASPANEL config")
-daspanel.host = os.getenv('DASPANEL_HOST', 'daspanel.site')
+daspanel.host = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
 
 mysql = ConfigSection("MySQL specific configuration")
 mysql.user = 'root'

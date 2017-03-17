@@ -13,7 +13,7 @@ from connexion import NoContent, request
 
 def get_item(cuid):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     try:
         database = DatabaseModel.get(cuid=cuid)
@@ -23,14 +23,14 @@ def get_item(cuid):
 
 def get_all():
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     all_rows = DatabaseModel.all()
     return [db.to_struct() for db in all_rows]
 
 def new_item(bdata):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     uuid = UuidGen()
     newrec = DatabaseModel(**bdata)
@@ -43,9 +43,9 @@ def new_item(bdata):
 
 def edit_item(cuid, bdata):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return NoContent, 401
     try:
         rec2edit = DatabaseModel.get(cuid=cuid)
@@ -59,7 +59,7 @@ def edit_item(cuid, bdata):
     
 def delete_item(cuid):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     try:
         rec2delete = DatabaseModel.get(cuid=cuid)
@@ -69,7 +69,7 @@ def delete_item(cuid):
 
 def chgpwd_item(cuid, bdata):
     tenant = request.headers['X-Api-Key']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return {"message": "Invalid X-Api-Key: {0}".format(tenant)}, 401
     try:
         rec2edit = DatabaseModel.get(cuid=cuid)

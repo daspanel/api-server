@@ -32,7 +32,7 @@ from daspanel_connexion_utils import api_fail
 
 def     install_remotezip(cuid, bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)

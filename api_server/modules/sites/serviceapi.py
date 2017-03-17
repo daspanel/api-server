@@ -27,7 +27,7 @@ from daspanel_connexion_utils import api_fail
 
 def httpserver_reload(servertype):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.sites.drivers.plugin_exist(servertype)):
         return api_fail(SITES_ERRORS, 'MISSINGDRIVER', servertype)
@@ -38,7 +38,7 @@ def httpserver_reload(servertype):
 
 def httpserver_deactivate(cuid, servertype):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -56,7 +56,7 @@ def httpserver_deactivate(cuid, servertype):
 
 def httpserver_activate(cuid, servertype):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -74,7 +74,7 @@ def httpserver_activate(cuid, servertype):
 
 def httpserver_delete(cuid, servertype):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -92,7 +92,7 @@ def httpserver_delete(cuid, servertype):
 
 def httpserver_gencfg(cuid, servertype):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)

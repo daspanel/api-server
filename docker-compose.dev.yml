@@ -1,5 +1,15 @@
 version: '2'
 services:
+    daspanel-storage:
+        image: daspanel/minio-fileserver
+        volumes:
+            - ./data:/opt/daspanel/data
+        networks:
+            - backend
+        expose:
+            - "9000"
+        env_file:
+            - daspanel.dev.env
     daspanel-services:
         image: daspanel/daspanel-services
         volumes:
@@ -8,21 +18,23 @@ services:
             - backend
         command:
             - /bin/true
-    daspanel-s3-server:
-        image: daspanel/minio-fileserver
+        depends_on:
+            - daspanel-storage
+    daspanel-mail-catcher:
+        image: daspanel/mailhog-mail-catcher
         volumes:
-            - daspanel-data-dev:/opt/daspanel/data
+            - ./data:/opt/daspanel/data
         networks:
+            - frontend
             - backend
-        expose:
-            - "9000"
         env_file:
-            - daspanel.dev.env
-            - smtp.dev.env
+            - daspanel.env
+        depends_on:
+            - daspanel-storage
     daspanel-mariadb:
         image: daspanel/mariadb
         volumes:
-            - daspanel-data-dev:/opt/daspanel/data
+            - ./data:/opt/daspanel/data
         networks:
             backend:
                 aliases:
@@ -33,22 +45,20 @@ services:
             - MARIADB_REMOTE_ROOT=true
         env_file:
             - daspanel.dev.env
-            - smtp.dev.env
     daspanel-php-fpm-5.6:
         image: daspanel/php-fpm-5.6
         volumes:
-            - daspanel-data-dev:/opt/daspanel/data
+            - ./data:/opt/daspanel/data
         networks:
             - backend
         expose:
             - "9000"
         env_file:
             - daspanel.dev.env
-            - smtp.dev.env
     daspanel-php-fpm-7.0:
         image: daspanel/php-fpm-7.0
         volumes:
-            - daspanel-data-dev:/opt/daspanel/data
+            - ./data:/opt/daspanel/data
         volumes_from:
             - daspanel-services:ro
         networks:
@@ -57,11 +67,10 @@ services:
             - "9000"
         env_file:
             - daspanel.dev.env
-            - smtp.dev.env
     daspanel-caddy-http-server:
         image: daspanel/caddy-http-server
         volumes:
-            - daspanel-data-dev:/opt/daspanel/data
+            - ./data:/opt/daspanel/data
         volumes_from:
             - daspanel-services:ro
         networks:
@@ -72,14 +81,13 @@ services:
             - "443:443"
         env_file:
             - daspanel.dev.env
-            - smtp.dev.env
     daspanel-api:
-        image: daspanel/api:0.1.0-dev
+        image: daspanel/api-server:latest-dev
         volumes:
             #- daspanel-data-dev:/opt/daspanel/data
-            - daspanel-data-dev:/opt/daspanel/data
+            - ./data:/opt/daspanel/data
             - .:/opt/daspanel/apps/apiserver
-            - ./container_data/opt/daspanel/conf-templates:/opt/daspanel/conf-templates
+            - ./container_data/opt/daspanel/conf-templates/caddy:/opt/daspanel/conf-templates/caddy
         networks:
             - frontend
             - backend
@@ -90,21 +98,10 @@ services:
             - PIP_INSTALL=-r /opt/daspanel/apps/apiserver/requirements/dev.txt -r /opt/daspanel/apps/apiserver/requirements/docs.txt -r /opt/daspanel/apps/apiserver/requirements/pkgutils.txt
         env_file:
             - daspanel.dev.env
-            - smtp.dev.env
         expose:
             - "8080"
-
-volumes:
-    #daspanel-data:
-    #    external:
-    #        name: daspanel-data
-    daspanel-data-dev:
-        driver: local
-        driver_opts:
-            type: none
-            device: /home/abner/Devel/data
-            o: bind
-
+        depends_on:
+            - daspanel-mail-catcher
 networks:  
   frontend:
     driver: bridge

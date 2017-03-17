@@ -1,91 +1,79 @@
 #!/usr/bin/with-contenv sh
 
-# Master admin email must be informed
-if [ -z "$DASPANEL_MASTER_EMAIL" ]; then
+# unless this has already been defined, set
+if [ -z "$DASPANEL_SYS_UUID" ]; then
     echo "***"
-    echo "ERROR: You must set the env variable DASPANEL_MASTER_EMAIL to a valid email"
+    echo "ERROR: You must set the env variable DASPANEL_SYS_UUID to a valid UUID"
     echo "***"
     exit 1
 fi
+export DASPANEL_SYS_ADMIN=`cat /opt/daspanel/data/$DASPANEL_SYS_UUID/db/sysconfig.json | /usr/bin/jq -r '.sys.admin'`
+export DASPANEL_SYS_PASSWORD=`cat /opt/daspanel/data/$DASPANEL_SYS_UUID/db/sysconfig.json | /usr/bin/jq -r '.sys.password'`
+export DASPANEL_SYS_HOSTNAME=`cat /opt/daspanel/data/$DASPANEL_SYS_UUID/db/sysconfig.json | /usr/bin/jq -r '.sys.hostname'`
+export DASPANEL_SMTP_USER=`cat /opt/daspanel/data/$DASPANEL_SYS_UUID/db/sysconfig.json | /usr/bin/jq -r '.smtp.user'`
 
-# unless this has already been defined, set
-if [ -z "$DASPANEL_MASTER_PASSWORD" ]; then
-    echo "***"
-    echo "ERROR: You must set the env variable DASPANEL_MASTER_PASSWORD to a valid password"
-    echo "***"
-    exit 1
+#echo "DASPANEL_SYS_ADMIN=$DASPANEL_SYS_ADMIN"
+#echo "DASPANEL_SYS_PASSWORD=$DASPANEL_SYS_PASSWORD"
+#echo "DASPANEL_SYS_HOSTNAME=$DASPANEL_SYS_HOSTNAME"
+#echo "DASPANEL_SMTP_USER=$DASPANEL_SMTP_USER"
+
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/containers" ]; then
+	mkdir -p /opt/daspanel/data/$DASPANEL_SYS_UUID/containers
 fi
 
-# unless this has already been defined, set
-if [ -z "$DASPANEL_GUUID" ]; then
-    echo "***"
-    echo "ERROR: You must set the env variable DASPANEL_GUUID to a valid GUUID"
-    echo "***"
-    exit 1
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/content" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/content"
 fi
 
-# unless this has already been defined, set
-if [ -z "$DASPANEL_HOST" ]; then
-    export DASPANEL_HOST="daspanel.site"
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/db" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/db"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/containers" ]; then
-	mkdir -p /opt/daspanel/data/$DASPANEL_GUUID/containers
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/sessions" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/sessions"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/content" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/content"
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/upload" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/upload"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/db" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/db"
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/upload/tmp" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/upload/tmp"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/sessions" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/sessions"
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/content" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/content"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/upload" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/upload"
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/certs" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/certs"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/upload/tmp" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/upload/tmp"
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/certs/_account" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/certs/_account"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/content" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/content"
+if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/letsencrypt" ]; then
+	mkdir -p "/opt/daspanel/data/$DASPANEL_SYS_UUID/letsencrypt"
 fi
 
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/certs" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/certs"
-fi
-
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/certs/_account" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/certs/_account"
-fi
-
-if [ ! -d "/opt/daspanel/data/$DASPANEL_GUUID/letsencrypt" ]; then
-	mkdir -p "/opt/daspanel/data/$DASPANEL_GUUID/letsencrypt"
-fi
-
-if [ ! -d "/opt/daspanel/log/$DASPANEL_GUUID/apiserver" ]; then
-	mkdir -p "/opt/daspanel/log/$DASPANEL_GUUID/apiserver"
+if [ ! -d "/opt/daspanel/log/$DASPANEL_SYS_UUID/apiserver" ]; then
+	mkdir -p "/opt/daspanel/log/$DASPANEL_SYS_UUID/apiserver"
 fi
 
 # Send email with instance info
-export DASPANEL_URL="http://api.$DASPANEL_HOST"
-export DASPANEL_API_URL="http://api.$DASPANEL_HOST/1.0/sites/"
-export DASPANEL_API_DOCS="http://api.$DASPANEL_HOST/1.0/sites/ui/"
+export DASPANEL_URL="http://api.$DASPANEL_SYS_HOSTNAME"
+export DASPANEL_API_URL="http://api.$DASPANEL_SYS_HOSTNAME/1.0/sites/"
+export DASPANEL_API_DOCS="http://api.$DASPANEL_SYS_HOSTNAME/1.0/sites/ui/"
 
-echo "daspanel-api: Sending setup info email to $DASPANEL_MASTER_EMAIL"
+echo "daspanel-api: Sending setup info email to $DASPANEL_SYS_ADMIN"
 { 
-    echo "To: $DASPANEL_MASTER_EMAIL"; 
-    echo "From: $DASPANEL_MAIL_USER"; 
-    echo "Subject: DASPANEL instance $DASPANEL_GUUID is running"; 
+    echo "To: $DASPANEL_SYS_ADMIN"; 
+    echo "From: $DASPANEL_SMTP_USER"; 
+    echo "Subject: DASPANEL instance $DASPANEL_SYS_UUID is running"; 
     echo ""; 
     echo "X-Api-Key:";
-    echo "   $DASPANEL_GUUID";
+    echo "   $DASPANEL_SYS_UUID";
     echo ""; 
     echo "Url:";
     echo "   $DASPANEL_URL";
@@ -94,18 +82,18 @@ echo "daspanel-api: Sending setup info email to $DASPANEL_MASTER_EMAIL"
     echo "   $DASPANEL_API_DOCS";
     echo ""; 
     echo "";
-    if [ -f /opt/daspanel/data/$DASPANEL_GUUID/containers/mysql.configured ]; then
+    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured ]; then
         echo "*** MYSQL CONFIG ***";
-        echo "$(cat /opt/daspanel/data/$DASPANEL_GUUID/containers/mysql.configured)";
+        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured)";
     fi
     echo ""; 
     echo "";
-    if [ -f /opt/daspanel/data/$DASPANEL_GUUID/containers/s3.configured ]; then
+    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured ]; then
         echo "*** S3 CONFIG ***";
-        echo "$(cat /opt/daspanel/data/$DASPANEL_GUUID/containers/s3.configured)";
+        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured)";
     fi
     echo ""; 
     echo ""; 
-} | ssmtp $DASPANEL_MASTER_EMAIL
+} | ssmtp $DASPANEL_SYS_ADMIN
 exit 0
 

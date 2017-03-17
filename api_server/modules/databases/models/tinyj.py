@@ -8,7 +8,7 @@ from tinydb_jsonorm import TinyJsonModel
 from tinydb_jsonorm import fields
 from jsonmodels import models, validators
 
-dbucket = os.environ['DASPANEL_GUUID']
+dbucket = os.environ['DASPANEL_SYS_UUID']
 DASPANEL_DATABASESFILE = '/opt/daspanel/data/' + dbucket + '/db/daspanel-databases.json'
 
 # Open config database, creating it if not exists

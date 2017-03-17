@@ -23,7 +23,7 @@ from daspanel_connexion_utils import api_fail
 
 def redirects_get_all(cuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -33,7 +33,7 @@ def redirects_get_all(cuid):
 
 def redirects_get_item(cuid, rcuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -50,7 +50,7 @@ def redirects_get_item(cuid, rcuid):
 
 def redirects_edit_item(cuid, rcuid, bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -81,7 +81,7 @@ def redirects_edit_item(cuid, rcuid, bdata):
 
 def redirects_delete_item(cuid, rcuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -105,7 +105,7 @@ def redirects_delete_item(cuid, rcuid):
 
 def redirects_new_item(cuid, bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -127,7 +127,7 @@ def redirects_new_item(cuid, bdata):
 
 def versions_activate(cuid, vcuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -150,7 +150,7 @@ def versions_activate(cuid, vcuid):
 
 def versions_clone(cuid, vcuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -193,7 +193,7 @@ def versions_clone(cuid, vcuid):
 
 def versions_edit_item(cuid, vcuid, bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -220,7 +220,7 @@ def versions_edit_item(cuid, vcuid, bdata):
 
 def versions_delete_item(cuid, vcuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -255,7 +255,7 @@ def versions_delete_item(cuid, vcuid):
 
 def versions_get_item(cuid, vcuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -272,7 +272,7 @@ def versions_get_item(cuid, vcuid):
 
 def versions_get_all(cuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -283,7 +283,7 @@ def versions_get_all(cuid):
 
 def versions_new_item(cuid, bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -308,7 +308,7 @@ def versions_new_item(cuid, bdata):
 
 def get_item(cuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         site = SiteModel.get(cuid=cuid)
@@ -319,14 +319,14 @@ def get_item(cuid):
 def get_all():
     print(request.headers)
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     all_rows = SiteModel.all()
     return [site.to_struct() for site in all_rows]
 
 def new_item(bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
@@ -359,7 +359,7 @@ def new_item(bdata):
 
 def edit_item(cuid, bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         rec2edit = SiteModel.get(cuid=cuid)
@@ -378,7 +378,7 @@ def edit_item(cuid, bdata):
     
 def delete_item(cuid):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         rec2delete = SiteModel.get(cuid=cuid)
@@ -394,7 +394,7 @@ def delete_item(cuid):
 
 def chgpwd_item(cuid, bdata):
     tenant = request.headers['Authorization']
-    if not tenant == os.environ['DASPANEL_GUUID']:
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     try:
         rec2edit = SiteModel.get(cuid=cuid)

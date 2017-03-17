@@ -30,4 +30,4 @@ Docker/local/buildlog.txt
 Docker/local/Dockerfile
 Docker/local/rootfs/
 buildlog.txt
-
+data/
