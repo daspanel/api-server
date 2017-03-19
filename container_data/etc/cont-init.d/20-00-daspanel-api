@@ -73,7 +73,7 @@ echo "daspanel-api: Sending setup info email to $DASPANEL_SYS_ADMIN"
     echo "Subject: DASPANEL instance $DASPANEL_SYS_UUID is running"; 
     echo "";
     echo "Control Panel URL:";
-    echo "   admin.$DASPANEL_SYS_HOSTNAME";
+    echo "   http://admin.$DASPANEL_SYS_HOSTNAME";
     echo "";
     echo "Control Panel User:";
     echo "   $DASPANEL_SYS_ADMIN";
