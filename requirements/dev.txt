@@ -1,6 +1,6 @@
 jsonmodels
 flask 
-tinydb-jsonorm=0.2.1
+tinydb-jsonorm
 click
 gunicorn
 json-logging-py
