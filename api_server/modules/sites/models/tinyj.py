@@ -47,11 +47,11 @@ class SiteModel(TinyJsonModel):
     _created_at = fields.DateTimeField(required=True)
 
     def __init__(self, *args, **kwargs):
+        super(SiteModel, self).__init__(*args, **kwargs)
         self._last_update = datetime.utcnow()
         self._created_at = self._last_update
         #if 'db' in kwargs:
         #    self.Meta.database = kwargs['db']
-        super(SiteModel, self).__init__(*args, **kwargs)
 
     def version_exist(self, version):
         records = self.to_struct()['versions']
