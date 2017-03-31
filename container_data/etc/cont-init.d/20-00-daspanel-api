@@ -12,11 +12,6 @@ export DASPANEL_SYS_PASSWORD=`cat /opt/daspanel/data/$DASPANEL_SYS_UUID/db/sysco
 export DASPANEL_SYS_HOSTNAME=`cat /opt/daspanel/data/$DASPANEL_SYS_UUID/db/sysconfig.json | /usr/bin/jq -r '.sys.hostname'`
 export DASPANEL_SMTP_USER=`cat /opt/daspanel/data/$DASPANEL_SYS_UUID/db/sysconfig.json | /usr/bin/jq -r '.smtp.user'`
 
-#echo "DASPANEL_SYS_ADMIN=$DASPANEL_SYS_ADMIN"
-#echo "DASPANEL_SYS_PASSWORD=$DASPANEL_SYS_PASSWORD"
-#echo "DASPANEL_SYS_HOSTNAME=$DASPANEL_SYS_HOSTNAME"
-#echo "DASPANEL_SMTP_USER=$DASPANEL_SMTP_USER"
-
 if [ ! -d "/opt/daspanel/data/$DASPANEL_SYS_UUID/containers" ]; then
 	mkdir -p /opt/daspanel/data/$DASPANEL_SYS_UUID/containers
 fi
@@ -66,44 +61,102 @@ export DASPANEL_URL="http://api.$DASPANEL_SYS_HOSTNAME"
 export DASPANEL_API_URL="http://api.$DASPANEL_SYS_HOSTNAME/1.0/sites/"
 export DASPANEL_API_DOCS="http://api.$DASPANEL_SYS_HOSTNAME/1.0/sites/ui/"
 
-echo "daspanel-api: Sending setup info email to $DASPANEL_SYS_ADMIN"
-{ 
-    echo "To: $DASPANEL_SYS_ADMIN"; 
-    echo "From: $DASPANEL_SMTP_USER"; 
-    echo "Subject: DASPANEL instance $DASPANEL_SYS_UUID is running"; 
-    echo "";
-    echo "Control Panel URL:";
-    echo "   http://admin.$DASPANEL_SYS_HOSTNAME";
-    echo "";
-    echo "Control Panel User:";
-    echo "   $DASPANEL_SYS_ADMIN";
-    echo "";
-    echo "Control Panel User Password:";
-    echo "   $DASPANEL_SYS_PASSWORD";
-    echo "";
-    echo "";
-    echo "X-Api-Key:";
-    echo "   $DASPANEL_SYS_UUID";
-    echo ""; 
-    echo "API Url:";
-    echo "   $DASPANEL_API_URL";
-    echo "";
-    echo "API Docs Url:";
-    echo "   $DASPANEL_API_DOCS";
-    echo ""; 
-    echo "";
-    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured ]; then
-        echo "*** MYSQL CONFIG ***";
-        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured)";
+#echo "daspanel-api: Sending setup info email to $DASPANEL_SYS_ADMIN"
+#{ 
+#    echo "To: $DASPANEL_SYS_ADMIN"; 
+#    echo "From: $DASPANEL_SMTP_USER"; 
+#    echo "Subject: DASPANEL instance $DASPANEL_SYS_UUID is running"; 
+#    echo "";
+#    echo "Control Panel URL:";
+#    echo "   http://admin.$DASPANEL_SYS_HOSTNAME";
+#    echo "";
+#    echo "Control Panel User:";
+#    echo "   $DASPANEL_SYS_ADMIN";
+#    echo "";
+#    echo "Control Panel User Password:";
+#    echo "   $DASPANEL_SYS_PASSWORD";
+#    echo "";
+#    echo "";
+#    echo "X-Api-Key:";
+#    echo "   $DASPANEL_SYS_UUID";
+#    echo ""; 
+#    echo "API Url:";
+#    echo "   $DASPANEL_API_URL";
+#    echo "";
+#    echo "API Docs Url:";
+#    echo "   $DASPANEL_API_DOCS";
+#    echo ""; 
+#    echo "";
+#    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured ]; then
+#        echo "*** MYSQL CONFIG ***";
+#        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured)";
+#    fi
+#    echo ""; 
+#    echo "";
+#    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured ]; then
+#        echo "*** S3 CONFIG ***";
+#        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured)";
+#    fi
+#    echo ""; 
+#    echo ""; 
+#} | ssmtp $DASPANEL_SYS_ADMIN
+
+ERR=1
+MAX_TRIES=4
+COUNT=0
+while [  $COUNT -lt $MAX_TRIES ]; do
+	{
+	    echo "To: $DASPANEL_SYS_ADMIN"; 
+	    echo "From: $DASPANEL_SMTP_USER"; 
+	    echo "Subject: DASPANEL instance $DASPANEL_SYS_UUID is running"; 
+	    echo "";
+	    echo "Control Panel URL:";
+	    echo "   http://admin.$DASPANEL_SYS_HOSTNAME";
+	    echo "";
+	    echo "Control Panel User:";
+	    echo "   $DASPANEL_SYS_ADMIN";
+	    echo "";
+	    echo "Control Panel User Password:";
+	    echo "   $DASPANEL_SYS_PASSWORD";
+	    echo "";
+	    echo "";
+	    echo "X-Api-Key:";
+	    echo "   $DASPANEL_SYS_UUID";
+	    echo ""; 
+	    echo "API Url:";
+	    echo "   $DASPANEL_API_URL";
+	    echo "";
+	    echo "API Docs Url:";
+	    echo "   $DASPANEL_API_DOCS";
+	    echo ""; 
+	    echo "";
+	    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured ]; then
+	        echo "*** MYSQL CONFIG ***";
+	        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/mysql.configured)";
+	    fi
+	    echo ""; 
+	    echo "";
+	    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured ]; then
+	        echo "*** S3 CONFIG ***";
+	        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured)";
+	    fi
+	    echo ""; 
+	    echo ""; 
+	} | ssmtp $DASPANEL_SYS_ADMIN
+    if [ $? -eq 0 ];then
+		echo "daspanel-api: Sending setup info email to $DASPANEL_SYS_ADMIN"
+        break
+	else
+		echo "Tentativa: $COUNT" 
+		if [ $COUNT -eq $(( $MAX_TRIES - 1 )) ];then
+			echo "End email sending attempts after $MAX_TRIES tries"
+			break
+		fi
+        echo "Waiting 5 seconds"
+        wait 5
     fi
-    echo ""; 
-    echo "";
-    if [ -f /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured ]; then
-        echo "*** S3 CONFIG ***";
-        echo "$(cat /opt/daspanel/data/$DASPANEL_SYS_UUID/containers/s3.configured)";
-    fi
-    echo ""; 
-    echo ""; 
-} | ssmtp $DASPANEL_SYS_ADMIN
+    let COUNT=COUNT+1
+done
+
 exit 0
 
