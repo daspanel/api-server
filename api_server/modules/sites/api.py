@@ -331,7 +331,6 @@ def new_item(bdata):
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
 
-    print("Criando: ", bdata)
     newrec = SiteModel(**bdata)
     newrec.urlprefix = newrec._cuid
     newrec._created_at = datetime.utcnow()
@@ -344,13 +343,12 @@ def new_item(bdata):
     newver.runtime = bdata['runtime']
     newver.directory = 'content/' + newrec._cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
     newver.validate()
-    newrec.versions = [newver]
+    newrec.versions.append(newver)
     newrec.active_version = newver._cuid
     newrec.active_dir = newver.directory
     newrec.redirects = []    
     newrec.validate()
     newrec.insert()
-
     fs = CONFIG.fs.drivers.get_instance(CONFIG.fs.active, 'DasFs', tenant=tenant, bucket=tenant)
     if not fs.exists(newver.directory):
         fs.mkdir(newver.directory)
