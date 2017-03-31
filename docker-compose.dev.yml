@@ -102,6 +102,22 @@ services:
             - "8080"
         depends_on:
             - daspanel-mail-catcher
+    daspanel-panel:
+        image: daspanel/panel:latest
+        volumes:
+            - ./data:/opt/daspanel/data
+        networks:
+            - frontend
+            - backend
+        environment:
+            - GUNICORN_APP_DIR=/opt/daspanel/apps/panel/daspanel_web
+            - GUNICORN_CMD=su-exec daspanel:daspanel python /opt/daspanel/apps/panel/wsgi.py
+        env_file:
+            - daspanel.env
+        expose:
+            - "5000"
+        depends_on:
+            - daspanel-api
 networks:  
   frontend:
     driver: bridge
