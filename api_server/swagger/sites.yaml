@@ -143,6 +143,36 @@ paths:
                     $ref: '#/responses/500InternalServerError'
                 503:
                     $ref: '#/responses/503ServiceUnavailable'
+    /httpconf/{hostname}:
+        get:
+            tags: [Sites]
+            x-swagger-router-controller: modules.sites.api
+            operationId: get_httpconf
+            summary: Get all sites HTTP config
+            parameters:
+                - $ref: '#/parameters/hostname'
+            description: |
+                This sites endpoint returns config data to set HTTP servers.
+            responses:
+                200:
+                    description: List of sites HTTP config
+                    schema:
+                        $ref: '#/definitions/HttpConfItems'
+                400:
+                    $ref: '#/responses/400BadRequest'
+                401:
+                    $ref: '#/responses/401Unauthorized'
+                403:
+                    $ref: '#/responses/403Forbidden'
+                404:
+                    $ref: '#/responses/404NotFound'
+                429:
+                    $ref: '#/responses/429TooManyRequests'
+                500:
+                    $ref: '#/responses/500InternalServerError'
+                503:
+                    $ref: '#/responses/503ServiceUnavailable'
+
     /{cuid}:
         get:
             tags: [Sites]
@@ -803,6 +833,14 @@ paths:
 #            read_pets: read your pets
 
 parameters:
+    hostname:
+        name: hostname
+        description: Host name
+        in: path
+        type: string
+        required: true
+        minLength: 1
+        maxLength: 254
     servertype:
         name: servertype
         description: "Daspanel service server type, like: nginx"
@@ -1109,6 +1147,59 @@ definitions:
                 minLength: 1
                 maxLength: 255
                 readOnly: true
+    HttpConfItems:
+        type: array
+        items:
+            $ref: '#/definitions/HttpConfItem'
+    HttpConfItem:
+        type: object
+        properties:
+            siteuuid:
+                type: string
+                description: Site UUID
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                pattern: "^[a-zA-Z0-9-]+$"
+            hosttype:
+                type: string
+                description: Type of http config
+                example: "Default"
+                minLength: 1
+                maxLength: 255
+            engine:
+                type: string
+                description: Http engine
+                example: "static"
+                minLength: 1
+                maxLength: 255
+            name:
+                type: string
+                description: Name of the vhost entry
+                example: "cit3gxhqh00007aruv60es3.sites."
+                minLength: 1
+                maxLength: 255
+            ssl:
+                type: boolean
+                description: Redirect have SSL
+            sslcert:
+                type: string
+                description: SSL cert file name
+                example: "mycert.crt"
+                minLength: 0
+                maxLength: 255
+            sslpath:
+                type: string
+                description: Path where SSL certs are located
+                example: "mycerts/dir"
+                minLength: 0
+                maxLength: 255
+            dir:
+                type: string
+                description: Directory root holding content of the site
+                example: "data/cit3gxhqh00007aruv60es3/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
+                minLength: 1
+                maxLength: 255
     Items:
         type: array
         items:

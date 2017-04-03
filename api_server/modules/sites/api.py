@@ -316,6 +316,67 @@ def get_item(cuid):
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
     return site.to_struct()
 
+def get_httpconf(hostname):
+    tenant = request.headers['Authorization']
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
+        return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    sites = SiteModel.all()
+    entries = []
+    for site in sites:
+        for version in site.versions:
+            vrec = {
+                'siteuuid': site._cuid,
+                'sitetype': version.sitetype,
+                'engine': version.runtime,
+                'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site._cuid, hostname),
+                'ssl': False,
+                'sslcert': '',
+                'certpath': '',
+                'dir': version.directory
+            }
+            if not site.urlprefix == site._cuid:
+                vrec['name'] += ' ' + '{0}.v.{1}.sites.{2}'.format(version._cuid, site.urlprefix, hostname)
+            entries.append(vrec)
+
+        for host in site.redirects:
+            result, host_version = site.get_version(host.version)
+            if not result:
+                return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', host.version)
+            hrec = {
+                'siteuuid': site._cuid,
+                'sitetype': host_version['sitetype'],
+                'engine': host_version['runtime'],
+                'name': host.hosturl + '.' + host.domain,
+                'ssl': host.ssl,
+                'sslcert': '',
+                'certpath': '/certs',
+                'dir': host_version['directory']
+            }
+            if host.hosturl == 'www':
+                hrec['name'] += ' ' + host.domain
+            if host.ssl:
+                hrec['certpath'] = '/certs/{0}'.format(host.domain)
+            entries.append(hrec)
+
+        result, cur_version = site.get_version(site.active_version)
+        if not result:
+            return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', site.active_version)
+
+        master = {
+            'siteuuid': site._cuid,
+            'sitetype': cur_version['sitetype'],
+            'engine': cur_version['runtime'],
+            'name': '{0}.sites.{1}'.format(site._cuid, hostname),
+            'ssl': False,
+            'sslcert': '',
+            'certpath': '',
+            'dir': site.active_dir
+        }
+        if not site.urlprefix == site._cuid:
+            master['name'] += ' ' + '{0}.sites.{1}'.format(site.urlprefix, hostname)
+        entries.append(master)
+    return entries
+
 def get_all():
     print(request.headers)
     tenant = request.headers['Authorization']
