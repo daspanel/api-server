@@ -60,6 +60,13 @@ class SiteModel(TinyJsonModel):
                 return True
         return False
 
+    def get_version(self, version):
+        records = self.to_struct()['versions']
+        for i, v in enumerate(records):
+            if v['_cuid'] == version:
+                return True, v
+        return False, None
+
     def redirectexist(self, domain, host):
         records = self.to_struct()['redirects']
         for i, v in enumerate(records):
