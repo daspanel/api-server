@@ -157,7 +157,7 @@ paths:
                 200:
                     description: List of sites HTTP config
                     schema:
-                        $ref: '#/definitions/HttpConfItems'
+                        $ref: '#/definitions/HttpConf'
                 400:
                     $ref: '#/responses/400BadRequest'
                 401:
@@ -1147,59 +1147,6 @@ definitions:
                 minLength: 1
                 maxLength: 255
                 readOnly: true
-    HttpConfItems:
-        type: array
-        items:
-            $ref: '#/definitions/HttpConfItem'
-    HttpConfItem:
-        type: object
-        properties:
-            siteuuid:
-                type: string
-                description: Site UUID
-                example: "cir22a51g0005mw45ay17gkeh"
-                minLength: 25
-                maxLength: 25
-                pattern: "^[a-zA-Z0-9-]+$"
-            hosttype:
-                type: string
-                description: Type of http config
-                example: "Default"
-                minLength: 1
-                maxLength: 255
-            engine:
-                type: string
-                description: Http engine
-                example: "static"
-                minLength: 1
-                maxLength: 255
-            name:
-                type: string
-                description: Name of the vhost entry
-                example: "cit3gxhqh00007aruv60es3.sites."
-                minLength: 1
-                maxLength: 255
-            ssl:
-                type: boolean
-                description: Redirect have SSL
-            sslcert:
-                type: string
-                description: SSL cert file name
-                example: "mycert.crt"
-                minLength: 0
-                maxLength: 255
-            sslpath:
-                type: string
-                description: Path where SSL certs are located
-                example: "mycerts/dir"
-                minLength: 0
-                maxLength: 255
-            dir:
-                type: string
-                description: Directory root holding content of the site
-                example: "data/cit3gxhqh00007aruv60es3/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
-                minLength: 1
-                maxLength: 255
     Items:
         type: array
         items:
@@ -1307,6 +1254,83 @@ definitions:
                 minLength: 25
                 maxLength: 25
                 pattern: "^[a-zA-Z0-9-]+$"
+
+    HttpConf:
+        type: array
+        items:
+            $ref: '#/definitions/HttpConfItem'
+    HttpConfItem:
+        type: object
+        properties:
+            _cuid:
+                type: string
+                description: Universal unique id of the site
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+            sitedescription:
+                type: string
+                description: Site name
+                example: "My new site"
+                minLength: 1
+                maxLength: 255
+            enabled:
+                type: boolean
+                description: Site enabled
+            configs:
+                type: array
+                items:
+                    $ref: '#/definitions/HttpConfigs'
+    HttpConfigs:
+        type: object
+        properties:
+            hosttype:
+                type: string
+                description: Type of http config
+                example: "Default"
+                minLength: 1
+                maxLength: 255
+            engine:
+                type: string
+                description: Http engine
+                example: "static"
+                minLength: 1
+                maxLength: 255
+            name:
+                type: string
+                description: Name of the vhost entry
+                example: "cit3gxhqh00007aruv60es3.sites."
+                minLength: 1
+                maxLength: 255
+            ssl:
+                type: boolean
+                description: Redirect have SSL
+            sslcert:
+                type: string
+                description: SSL cert file name
+                example: "mycert.crt"
+                minLength: 0
+                maxLength: 255
+            sslpath:
+                type: string
+                description: Path where SSL certs are located
+                example: "mycerts/dir"
+                minLength: 0
+                maxLength: 255
+            dir:
+                type: string
+                description: Directory root holding content of the site
+                example: "data/cit3gxhqh00007aruv60es3/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
+                minLength: 1
+                maxLength: 255
+            domain:
+                type: string
+                description: Domain
+                example: "daspanel.site"
+                minLength: 1
+                maxLength: 255
+                pattern: "(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-).)+[a-zA-Z]{2,63}$)"
 
     Message:
         type: object

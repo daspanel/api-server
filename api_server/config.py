@@ -42,13 +42,22 @@ class ConfigSection(object):
 daspanel = ConfigSection("DASPANEL config")
 daspanel.host = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
 
+# MySql
 mysql = ConfigSection("MySQL specific configuration")
 mysql.user = 'root'
 mysql.pwd = 'secret'
 mysql.host = 'localhost'
 mysql.port = 3306
 mysql.database = 'mydb'
-print("Loading config: ", mysql)
+print("Loading MySql config: ", mysql)
+
+# Redis
+redis = ConfigSection("Redis configuration")
+redis.host = 'daspanel-redis'
+redis.port = 6379
+redis.db = '0'
+redis.password = None
+print("Loading Redis config: ", redis)
 
 sites = ConfigSection("Sites module drivers")
 print("Loading config: ", sites)
@@ -64,6 +73,7 @@ for drv in drvlist:
 api = ConfigSection("API config")
 api.error_types = 'https://daspanel.com/docs/api/errors/types'
 
+# Filesystem drivers
 fs = ConfigSection("File System")
 fs.drivers = PluginCollection(plugin_source='lib.daspanel_fs.drivers', alt_pkg='daspanel_fs_drivers_')
 drivers = 'local'
@@ -72,5 +82,16 @@ for drv in drvlist:
     if (not fs.drivers.load(name=drv)):
         raise ValueError("Can not load filesystem driver API: {0}".format(drv))
 fs.active = 'local'
+
+# PubSub drivers
+pubsub = ConfigSection("PubSub drivers")
+print("Loading config: ", pubsub)
+pubsub.drivers = PluginCollection(plugin_source='lib.daspanel_pubsub', alt_pkg='daspanel_pubsub_drivers_')
+drivers = 'redis'
+drvlist = drivers.split()
+for drv in drvlist:
+    if (not pubsub.drivers.load(name=drv)):
+        raise ValueError("Can not load pubsub driver: {0}".format(drv))
+pubsub.active = 'redis'
 
 

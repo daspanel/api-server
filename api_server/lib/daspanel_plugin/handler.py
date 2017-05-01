@@ -23,7 +23,8 @@ class PluginCollection:
             endpoint_module.register(name, self)
             print("Driver registered: {0}.{1}".format(self.plugin_source, name))
             return True
-        except:
+        except Exception as e:
+            print(e)
             if (self.alt_pkg == None):
                 print("Invalid drive: {0}.{1}".format(self.plugin_source, name))
                 return False
@@ -34,7 +35,8 @@ class PluginCollection:
                     endpoint_module.register(name, self)
                     print("Driver registered: {0}{1}".format(self.self.alt_pkg, name))
                     return True
-                except:
+                except Exception as e:
+                    print(e)
                     print("Invalid drive: {0}{1}".format(self.alt_pkg, name))
                     return False
 
