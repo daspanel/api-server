@@ -6,9 +6,9 @@ class UnknownEndpoint(Exception):
     pass
 
 class PluginCollection:
-    _modules = {}
 
     def __init__(self, plugin_source, alt_pkg=None):
+        self._modules = {}
         self.plugin_source = plugin_source
         self.alt_pkg = alt_pkg
 
