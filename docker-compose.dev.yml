@@ -1,7 +1,19 @@
 version: '2'
 services:
+    daspanel-lb:
+        image: daspanel/load-balancer-caddy
+        volumes:
+            - ./data:/opt/daspanel/data
+        networks:
+            - frontend
+            - backend
+        ports:
+            - "80:80"
+            - "443:443"
+        env_file:
+            - daspanel.dev.env
     daspanel-redis:
-        image: daspanel/redis
+        image: daspanel/redis:0.4.0
         networks:
             - backend
         volumes:
@@ -9,20 +21,27 @@ services:
         expose:
             - "6379"
         env_file:
-            - daspanel.env
-        restart: always
-    daspanel-pubsub:
-        image: daspanel/nats
+            - daspanel.dev.env
+        #restart: always
+    daspanel-api:
+        image: daspanel/api-server:latest-dev
+        volumes:
+            #- daspanel-data-dev:/opt/daspanel/data
+            - ./data:/opt/daspanel/data
+            - .:/opt/daspanel/apps/apiserver
+            - ./container_data/opt/daspanel/conf-templates/caddy:/opt/daspanel/conf-templates/caddy
         networks:
+            - frontend
             - backend
-        expose:
-            - "4222"
-            - "6222"
-            - "8222"
+        environment:
+            - LOCAL_USER_ID=1000
+            - GUNICORN_APP_DIR=/opt/daspanel/apps/apiserver/api_server
+            - GUNICORN_CMD=/opt/daspanel/apps/apiserver/api_server/wsgi_gunicorn --bind=0.0.0.0:8080 --user=daspanel --group=daspanel api-connexion:app Daspanel_Api_Server
+            - DASPANEL_WAIT_FOR_API=NO
         env_file:
             - daspanel.dev.env
-        depends_on:
-            - daspanel-redis
+        expose:
+            - "8080"
     daspanel-storage:
         image: daspanel/minio-fileserver
         volumes:
@@ -34,7 +53,8 @@ services:
         env_file:
             - daspanel.dev.env
         depends_on:
-            - daspanel-pubsub
+            - daspanel-api
+            - daspanel-redis
     daspanel-services:
         image: daspanel/daspanel-services
         volumes:
@@ -44,6 +64,7 @@ services:
         command:
             - /bin/true
         depends_on:
+            - daspanel-api
             - daspanel-storage
     daspanel-mail-catcher:
         image: daspanel/mailhog-mail-catcher
@@ -55,6 +76,7 @@ services:
         env_file:
             - daspanel.env
         depends_on:
+            - daspanel-api
             - daspanel-storage
     daspanel-mariadb:
         image: daspanel/mariadb
@@ -71,6 +93,7 @@ services:
         env_file:
             - daspanel.dev.env
         depends_on:
+            - daspanel-api
             - daspanel-storage
     daspanel-php-fpm-5.6:
         image: daspanel/php-fpm-5.6
@@ -83,27 +106,8 @@ services:
         env_file:
             - daspanel.dev.env
         depends_on:
+            - daspanel-api
             - daspanel-storage
-    daspanel-api:
-        image: daspanel/api-server:latest-dev
-        volumes:
-            #- daspanel-data-dev:/opt/daspanel/data
-            - ./data:/opt/daspanel/data
-            - .:/opt/daspanel/apps/apiserver
-            - ./container_data/opt/daspanel/conf-templates/caddy:/opt/daspanel/conf-templates/caddy
-        networks:
-            - frontend
-            - backend
-        environment:
-            - LOCAL_USER_ID=1000
-            - GUNICORN_APP_DIR=/opt/daspanel/apps/apiserver/api_server
-            - GUNICORN_CMD=/opt/daspanel/apps/apiserver/api_server/wsgi_gunicorn --bind=0.0.0.0:8080 --user=daspanel --group=daspanel api-connexion:app Daspanel_Api_Server
-        env_file:
-            - daspanel.dev.env
-        expose:
-            - "8080"
-        depends_on:
-            - daspanel-mail-catcher
     daspanel-panel:
         image: daspanel/panel:latest-dev
         volumes:
@@ -120,8 +124,9 @@ services:
             - "5000"
         depends_on:
             - daspanel-api
-    daspanel-php-fpm-7.0:
-        image: daspanel/php-fpm-7.0
+            - daspanel-storage
+    daspanel-engine-php70:
+        image: daspanel/engine-php70
         volumes:
             - ./data:/opt/daspanel/data
         volumes_from:
@@ -129,13 +134,9 @@ services:
         networks:
             - backend
         expose:
-            - "9000"
-            - "80"
             - "443"
         env_file:
             - daspanel.dev.env
-        depends_on:
-            - daspanel-api
     daspanel-engine-static:
         image: daspanel/engine-static
         volumes:
@@ -147,24 +148,6 @@ services:
             - "443"
         env_file:
             - daspanel.dev.env
-        depends_on:
-            - daspanel-api
-    daspanel-lb:
-        #image: daspanel/caddy-http-server
-        image: daspanel/load-balancer-caddy
-        volumes:
-            - ./data:/opt/daspanel/data
-        networks:
-            - frontend
-            - backend
-        ports:
-            - "80:80"
-            - "443:443"
-        env_file:
-            - daspanel.dev.env
-        depends_on:
-            - daspanel-api
-            - daspanel-storage
 networks:  
   frontend:
     driver: bridge

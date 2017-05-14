@@ -1,11 +1,24 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
-import os
+import os, random, string, json
 
 try:
     from daspanel_plugin import PluginCollection
 except:
     from lib.daspanel_plugin import PluginCollection
+
+def gen_pass(ucase=5, lcase=5, digits=6, schars=0):
+    password = ''
+    for i in range(int(ucase)):
+        password += string.uppercase[random.randint(0,len(string.uppercase)-1)]
+    for i in range(int(lcase)):
+        password += string.lowercase[random.randint(0,len(string.lowercase)-1)]
+    for i in range(int(digits)):
+        password += string.digits[random.randint(0,len(string.digits)-1)]
+    for i in range(int(schars)):
+        password += string.punctuation[random.randint(0,len(string.punctuation)-1)]
+
+    return ''.join(random.sample(password,len(password)))
 
 class ConfigSection(object):
 
@@ -41,6 +54,26 @@ class ConfigSection(object):
 
 daspanel = ConfigSection("DASPANEL config")
 daspanel.host = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
+daspanel.cfg_version = '0.1.0'
+daspanel.def_cfg = {}
+daspanel.def_cfg['sys'] = {}
+daspanel.def_cfg['sys']['hostname'] = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
+daspanel.def_cfg['sys']['apiserver'] = os.getenv('DASPANEL_SYS_HOSTNAME', 'http://daspanel-api:8080/1.0')
+daspanel.def_cfg['sys']['admin'] = os.getenv('DASPANEL_SYS_ADMIN', 'admin@{0}'.format(daspanel.def_cfg['sys']['hostname']))
+daspanel.def_cfg['sys']['password'] = os.getenv('DASPANEL_SYS_PASSWORD', gen_pass())
+daspanel.def_cfg['sys']['msghub'] = os.getenv('DASPANEL_SYS_MSGHUB', 'mail-catcher')
+daspanel.def_cfg['sys']['debug'] = os.getenv('DASPANEL_SYS_DEBUG', False)
+daspanel.def_cfg['smtp'] = {}
+daspanel.def_cfg['smtp']['type'] = 'mail-catcher'
+daspanel.def_cfg['smtp']['server'] = 'daspanel-mail-catcher:1025'
+daspanel.def_cfg['smtp']['user'] = daspanel.def_cfg['sys']['admin']
+daspanel.def_cfg['smtp']['password'] = os.getenv('DASPANEL_SYS_UUID', gen_pass())
+daspanel.def_cfg['redis'] = {}
+daspanel.def_cfg['redis']['server'] = 'daspanel-redis'
+daspanel.def_cfg['redis']['port'] = 6379
+daspanel.def_cfg['redis']['database'] = 0
+daspanel.def_cfg['redis']['user'] = ''
+daspanel.def_cfg['redis']['password'] = os.getenv('DASPANEL_SYS_UUID', gen_pass())
 
 # MySql
 mysql = ConfigSection("MySQL specific configuration")
@@ -93,5 +126,16 @@ for drv in drvlist:
     if (not pubsub.drivers.load(name=drv)):
         raise ValueError("Can not load pubsub driver: {0}".format(drv))
 pubsub.active = 'redis'
+
+# Tenant drivers
+tenant = ConfigSection("Tenant drivers")
+print("Loading config: ", tenant)
+tenant.drivers = PluginCollection(plugin_source='modules.tenants.drivers', alt_pkg='daspanel_tenant_drivers_')
+drivers = 'standalone'
+drvlist = drivers.split()
+for drv in drvlist:
+    if (not tenant.drivers.load(name=drv)):
+        raise ValueError("Can not load tenant driver: {0}".format(drv))
+tenant.active = 'standalone'
 
 

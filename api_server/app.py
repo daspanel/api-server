@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 app = connexion.App(__name__)
 
 # Add api blueprints
-app.add_api('swagger/apiserver.yaml')
+app.add_api('swagger/apiserver.yaml', base_path='/1.0/sys')
 #app.add_api('swagger/databases.yaml', base_path='/1.0/databases')
 #app.add_api('swagger/domains.yaml', base_path='/1.0/domains')
 app.add_api('swagger/sites.yaml', base_path='/1.0/sites')

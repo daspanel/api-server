@@ -462,6 +462,9 @@ def get_httpconf(hostname):
 
 def get_all():
     tenant = request.headers['Authorization']
+    if (not CONFIG.tenant.drivers.plugin_exist(CONFIG.tenant.active)):
+        return api_fail(DASPANEL_ERRORS, 'TENANTMISSINGDRIVER', CONFIG.tenant.active)
+    cur_tenant = CONFIG.tenant.drivers.get_instance(CONFIG.tenant.active, 'DasTenant', tenant=request.headers['Authorization'])
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     all_rows = SiteModel.all()
