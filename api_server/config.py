@@ -74,6 +74,13 @@ daspanel.def_cfg['redis']['port'] = 6379
 daspanel.def_cfg['redis']['database'] = 0
 daspanel.def_cfg['redis']['user'] = ''
 daspanel.def_cfg['redis']['password'] = os.getenv('DASPANEL_SYS_UUID', gen_pass())
+daspanel.def_cfg['s3'] = {}
+daspanel.def_cfg['s3']['browser_url'] = 'https://s3.svc.{0}'.format(daspanel.def_cfg['sys']['hostname'])
+daspanel.def_cfg['s3']['endpoint'] = 'https://s3.svc.{0}'.format(daspanel.def_cfg['sys']['hostname'])
+daspanel.def_cfg['s3']['region'] = 'us-east-1'
+daspanel.def_cfg['s3']['access_key'] = os.getenv('DASPANEL_SYS_UUID')[0:20]
+daspanel.def_cfg['s3']['secret_key'] = daspanel.def_cfg['sys']['password']
+
 
 # MySql
 mysql = ConfigSection("MySQL specific configuration")
