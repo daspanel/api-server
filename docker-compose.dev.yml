@@ -72,23 +72,18 @@ services:
             - backend
         env_file:
             - daspanel.env
-    daspanel-mariadb:
+    daspanel-mysql:
         image: daspanel/mariadb
         volumes:
             - ./data:/opt/daspanel/data
         networks:
-            backend:
-                aliases:
-                    - daspanel-mysql
+            - backend
         expose:
             - "3306"
         environment:
             - MARIADB_REMOTE_ROOT=true
         env_file:
             - daspanel.dev.env
-        depends_on:
-            - daspanel-api
-            - daspanel-storage
     daspanel-php-fpm-5.6:
         image: daspanel/php-fpm-5.6
         volumes:
