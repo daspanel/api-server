@@ -101,6 +101,7 @@ definitions:
             sys:
                 type: object
                 required:
+                    - config_version
                     - apiserver
                     - admin
                     - password
@@ -109,6 +110,12 @@ definitions:
                     - debug
                 description: System config
                 properties:
+                    config_version:
+                        type: string
+                        description: Config format version
+                        example: "0.1.0"
+                        minLength: 5
+                        maxLength: 256
                     apiserver:
                         type: string
                         description: Api server address

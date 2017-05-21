@@ -57,6 +57,7 @@ daspanel.host = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
 daspanel.cfg_version = '0.1.0'
 daspanel.def_cfg = {}
 daspanel.def_cfg['sys'] = {}
+daspanel.def_cfg['sys']['config_version'] = '0.1.0'
 daspanel.def_cfg['sys']['hostname'] = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
 daspanel.def_cfg['sys']['apiserver'] = os.getenv('DASPANEL_SYS_HOSTNAME', 'http://daspanel-api:8080/1.0')
 daspanel.def_cfg['sys']['admin'] = os.getenv('DASPANEL_SYS_ADMIN', 'admin@{0}'.format(daspanel.def_cfg['sys']['hostname']))
@@ -80,7 +81,6 @@ daspanel.def_cfg['s3']['endpoint'] = 'https://s3.svc.{0}'.format(daspanel.def_cf
 daspanel.def_cfg['s3']['region'] = 'us-east-1'
 daspanel.def_cfg['s3']['access_key'] = os.getenv('DASPANEL_SYS_UUID')[0:20]
 daspanel.def_cfg['s3']['secret_key'] = daspanel.def_cfg['sys']['password']
-
 
 # MySql
 mysql = ConfigSection("MySQL specific configuration")
