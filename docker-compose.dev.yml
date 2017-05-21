@@ -52,9 +52,6 @@ services:
             - "9000"
         env_file:
             - daspanel.dev.env
-        depends_on:
-            - daspanel-api
-            - daspanel-redis
     daspanel-services:
         image: daspanel/daspanel-services
         volumes:
@@ -75,9 +72,6 @@ services:
             - backend
         env_file:
             - daspanel.env
-        depends_on:
-            - daspanel-api
-            - daspanel-storage
     daspanel-mariadb:
         image: daspanel/mariadb
         volumes:
