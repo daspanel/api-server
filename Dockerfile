@@ -20,7 +20,7 @@ LABEL org.label-schema.schema-version="1.0" \
       org.label-schema.description="This service provides a Daspanel api server platform." \
       org.label-schema.architecture="x86_64" \
       org.label-schema.distribution="Alpine Linux" \
-      org.label-schema.distribution-version="3.4" \
+      org.label-schema.distribution-version="3.5" \
       info.daspanel.apiserver=$VERSION
 
 ENV INSTALL_PATH /opt/daspanel/apps/apiserver

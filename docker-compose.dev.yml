@@ -108,9 +108,6 @@ services:
             - daspanel.env
         expose:
             - "5000"
-        depends_on:
-            - daspanel-api
-            - daspanel-storage
     daspanel-engine-php70:
         image: daspanel/engine-php70
         volumes:
