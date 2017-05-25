@@ -98,6 +98,7 @@ services:
         image: daspanel/panel:latest-dev
         volumes:
             - ./data:/opt/daspanel/data
+            - /home/abner/Devel/abnerjacobsen/python/daspanel-web:/opt/daspanel/apps/panel
         networks:
             - frontend
             - backend
