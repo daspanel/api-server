@@ -26,7 +26,6 @@ services:
     daspanel-api:
         image: daspanel/api-server:latest-dev
         volumes:
-            #- daspanel-data-dev:/opt/daspanel/data
             - ./data:/opt/daspanel/data
             - .:/opt/daspanel/apps/apiserver
             - ./container_data/opt/daspanel/conf-templates/caddy:/opt/daspanel/conf-templates/caddy
@@ -81,19 +80,6 @@ services:
             - MARIADB_REMOTE_ROOT=true
         env_file:
             - daspanel.dev.env
-    daspanel-php-fpm-5.6:
-        image: daspanel/php-fpm-5.6
-        volumes:
-            - ./data:/opt/daspanel/data
-        networks:
-            - backend
-        expose:
-            - "9000"
-        env_file:
-            - daspanel.dev.env
-        depends_on:
-            - daspanel-api
-            - daspanel-storage
     daspanel-panel:
         image: daspanel/panel:latest-dev
         volumes:
@@ -109,6 +95,16 @@ services:
             - daspanel.env
         expose:
             - "5000"
+    daspanel-engine-php56:
+        image: daspanel/engine-php56
+        volumes:
+            - ./data:/opt/daspanel/data
+        networks:
+            - backend
+        expose:
+            - "443"
+        env_file:
+            - daspanel.dev.env
     daspanel-engine-php70:
         image: daspanel/engine-php70
         volumes:
