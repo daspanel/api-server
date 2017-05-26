@@ -159,9 +159,8 @@ def versions_activate(cuid, vcuid):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
-
-    conn = Redis(host='daspanel-redis', port=6379, db=0, password=tenant)
-    conn.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
     return site.to_struct(), 200
 
@@ -209,8 +208,8 @@ def versions_clone(cuid, vcuid):
         fs.rmtree(newver.directory)
     fs.cptree(versions[vedit]['directory'], newver.directory)
 
-    conn = Redis(host='daspanel-redis', port=6379, db=0, password=tenant)
-    conn.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
     return newver.to_struct(), 201
 
@@ -243,8 +242,8 @@ def versions_edit_item(cuid, vcuid, bdata):
     site.validate()
     site.save()
 
-    conn = Redis(host='daspanel-redis', port=6379, db=0, password=tenant)
-    conn.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
     return versions[vedit], 200
 
@@ -285,8 +284,8 @@ def versions_delete_item(cuid, vcuid):
     site.validate()
     site.save()
 
-    conn = Redis(host='daspanel-redis', port=6379, db=0, password=tenant)
-    conn.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
     return NoContent, 204
 
@@ -344,8 +343,8 @@ def versions_new_item(cuid, bdata):
     fs = CONFIG.fs.drivers.get_instance(CONFIG.fs.active, 'DasFs', tenant=tenant, bucket=tenant)
     fs.mkdir(newver.directory)
 
-    conn = Redis(host='daspanel-redis', port=6379, db=0, password=tenant)
-    conn.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
     return newver.to_struct(), 201
 
@@ -528,8 +527,8 @@ def edit_item(cuid, bdata):
     rec2edit.validate()
     rec2edit.save()
 
-    conn = Redis(host='daspanel-redis', port=6379, db=0, password=tenant)
-    conn.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
     #return {"newpaswd": "xxxxx"}, 200
     
@@ -551,8 +550,8 @@ def delete_item(cuid):
     if fs.exists('content/' + cuid):
         fs.rmtree('content/' + cuid)
 
-    conn = Redis(host='daspanel-redis', port=6379, db=0, password=tenant)
-    conn.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
     rec2delete.delete()
 
