@@ -29,11 +29,13 @@ def httpserver_reload(servertype):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
-    if (not CONFIG.sites.drivers.plugin_exist(servertype)):
-        return api_fail(SITES_ERRORS, 'MISSINGDRIVER', servertype)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
-    driver =  CONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
-    status, result = driver.reload()
+    #driver =  xCONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
+    #status, result = driver.reload()
     return NoContent, 204
 
 def httpserver_deactivate(cuid, servertype):
