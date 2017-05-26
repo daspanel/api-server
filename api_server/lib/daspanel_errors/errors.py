@@ -53,6 +53,8 @@ DASPANEL_ERRORS = {
     'NOTZIPFILE': ApiErrorMsgType(401, 'File is not zip', 
         'File is not of the type zip: {0}', 
         error_doc),
-
+    'PSMISSINGDRIVER': ApiErrorMsgType(401, 'Missing PubSub System Driver', 
+        'DasPanel Api server is not running this pubsub system driver: {0}', 
+        error_doc),
 }
 

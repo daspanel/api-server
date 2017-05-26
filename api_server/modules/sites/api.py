@@ -20,7 +20,6 @@ from .errors import SITES_ERRORS
 # API server imports
 from connexion import request, NoContent
 from daspanel_connexion_utils import api_fail
-from redis import Redis
 
 def redirects_get_all(cuid):
     tenant = request.headers['Authorization']
@@ -54,7 +53,7 @@ def redirects_edit_item(cuid, rcuid, bdata):
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -81,6 +80,10 @@ def redirects_edit_item(cuid, rcuid, bdata):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return redirects[vedit], 200
 
 def redirects_delete_item(cuid, rcuid):
@@ -88,7 +91,7 @@ def redirects_delete_item(cuid, rcuid):
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -110,12 +113,16 @@ def redirects_delete_item(cuid, rcuid):
     site.validate()
     site.save()
 
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
+
 def redirects_new_item(cuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -132,6 +139,10 @@ def redirects_new_item(cuid, bdata):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return newredir.to_struct(), 201
 
 
@@ -140,7 +151,7 @@ def versions_activate(cuid, vcuid):
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -171,7 +182,7 @@ def versions_clone(cuid, vcuid):
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -218,7 +229,7 @@ def versions_edit_item(cuid, vcuid, bdata):
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -254,7 +265,7 @@ def versions_delete_item(cuid, vcuid):
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -324,7 +335,7 @@ def versions_new_item(cuid, bdata):
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         site = SiteModel.get(cuid=cuid)
@@ -476,7 +487,7 @@ def new_item(bdata):
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     newrec = SiteModel(**bdata)
     newrec.urlprefix = newrec._cuid
@@ -510,7 +521,7 @@ def edit_item(cuid, bdata):
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         rec2edit = SiteModel.get(cuid=cuid)
@@ -539,7 +550,7 @@ def delete_item(cuid):
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     try:
         rec2delete = SiteModel.get(cuid=cuid)
