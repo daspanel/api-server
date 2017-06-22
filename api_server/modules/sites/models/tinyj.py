@@ -28,7 +28,7 @@ class SiteRedirects(TinyJsonModel):
     __tablename__ = "siteredirects"
     hosturl = fields.StringField(required=True, validators=[validators.Length(0, 255)])
     domain = fields.StringField(required=True, validators=[validators.Length(1, 255)])
-    ssl = fields.BoolField(required=True)
+    ssl = fields.StringField(required=True, validators=[validators.Length(1, 32)])
     sslcert = fields.StringField(required=False, validators=[validators.Length(0, 255)])
     sslkey = fields.StringField(required=False, validators=[validators.Length(0, 255)])
     version = fields.StringField(required=True, validators=[validators.Length(25, 25)])
@@ -59,6 +59,13 @@ class SiteModel(TinyJsonModel):
             if v['_cuid'] == version:
                 return True
         return False
+
+    def get_version(self, version):
+        records = self.to_struct()['versions']
+        for i, v in enumerate(records):
+            if v['_cuid'] == version:
+                return True, v
+        return False, None
 
     def redirectexist(self, domain, host):
         records = self.to_struct()['redirects']

@@ -1,11 +1,36 @@
 swagger: '2.0'
 info:
-  title: DASPANEL API
-  version: "1.0"
+    version: "1.0.0"
+    title: DASPANEL System API
+    description: |
+
+        System related API methods.
+
+        The first version of the Daspanel Sites API is an exciting step forward 
+        towards making an hosting control panel using Docker. We created it so 
+        that you can create any site, plain or using PHP, in your local machine 
+        and when ready easy deploy it on an public server exactly as you see it 
+        in the development machine.
+
+        Build something great!
+
+    version: "1.0"
+    termsOfService: http://daspanel.com/terms/
+    contact:
+        name: Daspanel API team
+        email: admin@daspanel.com
+        url: http://daspanel.com
+    license:
+        name: GPL-3
+        url: https://opensource.org/licenses/GPL-3.0
+# array of all schemes that your API supports
+schemes:
+    - http
+    - https
 consumes:
-  - application/json
+    - application/json
 produces:
-  - application/json
+    - application/json
 paths:
   /status:
     get:

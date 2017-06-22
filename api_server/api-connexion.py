@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 app = connexion.App(__name__)
 
 # Add api blueprints
-app.add_api('swagger/apiserver.yaml')
+app.add_api('swagger/apiserver.yaml', base_path='/1.0/info')
+app.add_api('swagger/tenants.yaml', base_path='/1.0/tenants')
 app.add_api('swagger/sites.yaml', base_path='/1.0/sites')
 
 # Trick: app.app is the Flask app object inside Connexion app object

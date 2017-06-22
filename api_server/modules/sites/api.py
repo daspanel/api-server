@@ -52,6 +52,9 @@ def redirects_edit_item(cuid, rcuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
@@ -77,12 +80,19 @@ def redirects_edit_item(cuid, rcuid, bdata):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return redirects[vedit], 200
 
 def redirects_delete_item(cuid, rcuid):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
@@ -103,10 +113,17 @@ def redirects_delete_item(cuid, rcuid):
     site.validate()
     site.save()
 
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
+
 def redirects_new_item(cuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
@@ -122,6 +139,10 @@ def redirects_new_item(cuid, bdata):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return newredir.to_struct(), 201
 
 
@@ -129,6 +150,9 @@ def versions_activate(cuid, vcuid):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
@@ -146,18 +170,24 @@ def versions_activate(cuid, vcuid):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return site.to_struct(), 200
 
 def versions_clone(cuid, vcuid):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
+        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
-    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
 
     versions = site.to_struct()['versions']
     vedit = -1
@@ -187,14 +217,20 @@ def versions_clone(cuid, vcuid):
 
     if fs.exists(newver.directory):
         fs.rmtree(newver.directory)
-
     fs.cptree(versions[vedit]['directory'], newver.directory)
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return newver.to_struct(), 201
 
 def versions_edit_item(cuid, vcuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
@@ -216,12 +252,21 @@ def versions_edit_item(cuid, vcuid, bdata):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return versions[vedit], 200
 
 def versions_delete_item(cuid, vcuid):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
+        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
@@ -229,8 +274,6 @@ def versions_delete_item(cuid, vcuid):
     if site.active_version == vcuid:
         return api_fail(SITES_ERRORS, 'VERSIONISACTIVE', vcuid, site.sitedescription)
         #return {"errors": [], "message": "Cann't delete current active version of the site"}, 400
-    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
 
     #somelist[:] = [tup for tup in somelist if determine(tup)]
     versions = site.to_struct()['versions']
@@ -251,6 +294,10 @@ def versions_delete_item(cuid, vcuid):
     site._last_update = datetime.utcnow()
     site.validate()
     site.save()
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return NoContent, 204
 
 def versions_get_item(cuid, vcuid):
@@ -285,12 +332,15 @@ def versions_new_item(cuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
+        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         site = SiteModel.get(cuid=cuid)
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
-    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
 
     newver = SiteVersion(**bdata)
     newver.date = datetime.utcnow()
@@ -304,6 +354,9 @@ def versions_new_item(cuid, bdata):
     fs = CONFIG.fs.drivers.get_instance(CONFIG.fs.active, 'DasFs', tenant=tenant, bucket=tenant)
     fs.mkdir(newver.directory)
 
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return newver.to_struct(), 201
 
 def get_item(cuid):
@@ -316,9 +369,112 @@ def get_item(cuid):
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
     return site.to_struct()
 
-def get_all():
-    print(request.headers)
+def get_httpconf(hostname):
     tenant = request.headers['Authorization']
+    if not tenant == os.environ['DASPANEL_SYS_UUID']:
+        return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    sites = SiteModel.all()
+    entries = []
+    for site in sites:
+        sitecfg = {
+            '_cuid': site._cuid,
+            'sitedescription': site.sitedescription,
+            'enabled': True,
+            'configs': []
+        }
+        for version in site.versions:
+            vrec = {
+                'sitetype': version.sitetype,
+                'engine': version.runtime,
+                'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site._cuid, hostname),
+                'ssl': 'self',
+                'sslcert': '',
+                'certpath': '',
+                'dir': version.directory,
+                'domain': hostname
+            }
+            sitecfg['configs'].append(vrec)
+            if not site.urlprefix == site._cuid:
+                vrec = {
+                    'sitetype': version.sitetype,
+                    'engine': version.runtime,
+                    'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site.urlprefix, hostname),
+                    'ssl': 'self',
+                    'sslcert': '',
+                    'certpath': '',
+                    'dir': version.directory,
+                    'domain': hostname
+                }
+                sitecfg['configs'].append(vrec)
+
+        for host in site.redirects:
+            result, host_version = site.get_version(host.version)
+            if not result:
+                return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', host.version)
+            hrec = {
+                'sitetype': host_version['sitetype'],
+                'engine': host_version['runtime'],
+                'name': '{0}.{1}'.format(host.hosturl, host.domain),
+                'ssl': host.ssl,
+                'sslcert': '',
+                'certpath': '/certs',
+                'dir': host_version['directory'],
+                'domain': host.domain
+            }
+            #if host.ssl:
+            hrec['certpath'] = '/certs/{0}'.format(host.domain)
+            sitecfg['configs'].append(hrec)
+            if host.hosturl == 'www':
+                hrec = {
+                    'sitetype': host_version['sitetype'],
+                    'engine': host_version['runtime'],
+                    'name': '{0}'.format(host.domain),
+                    'ssl': host.ssl,
+                    'sslcert': '',
+                    'certpath': '/certs',
+                    'dir': host_version['directory'],
+                    'domain': host.domain
+                }
+                #if host.ssl:
+                hrec['certpath'] = '/certs/{0}'.format(host.domain)
+                sitecfg['configs'].append(hrec)
+
+        result, cur_version = site.get_version(site.active_version)
+        if not result:
+            return api_fail(SITES_ERRORS, 'VERSIONNOTFOUND', site.active_version)
+        master = {
+            'sitetype': cur_version['sitetype'],
+            'engine': cur_version['runtime'],
+            'name': '{0}.sites.{1}'.format(site._cuid, hostname),
+            'ssl': 'self',
+            'sslcert': '',
+            'certpath': '',
+            'dir': site.active_dir,
+            'domain': hostname
+        }
+        sitecfg['configs'].append(master)
+        if not site.urlprefix == site._cuid:
+            master = {
+                'sitetype': cur_version['sitetype'],
+                'engine': cur_version['runtime'],
+                'name': '{0}.sites.{1}'.format(site.urlprefix, hostname),
+                'ssl': 'self',
+                'sslcert': '',
+                'certpath': '',
+                'dir': site.active_dir,
+                'domain': hostname
+            }
+            sitecfg['configs'].append(master)
+
+        entries.append(sitecfg)
+    return entries
+
+
+def get_all():
+    tenant = request.headers['Authorization']
+    if (not CONFIG.tenant.drivers.plugin_exist(CONFIG.tenant.active)):
+        return api_fail(DASPANEL_ERRORS, 'TENANTMISSINGDRIVER', CONFIG.tenant.active)
+    cur_tenant = CONFIG.tenant.drivers.get_instance(CONFIG.tenant.active, 'DasTenant', tenant=request.headers['Authorization'])
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     all_rows = SiteModel.all()
@@ -330,6 +486,8 @@ def new_item(bdata):
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     newrec = SiteModel(**bdata)
     newrec.urlprefix = newrec._cuid
@@ -353,16 +511,23 @@ def new_item(bdata):
     if not fs.exists(newver.directory):
         fs.mkdir(newver.directory)
 
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     return newrec.to_struct(), 201
 
 def edit_item(cuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         rec2edit = SiteModel.get(cuid=cuid)
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
+
     result, site_id = rec2edit.urlprefix_used(bdata["urlprefix"])
     if result and (not cuid == site_id):
         return api_fail(SITES_ERRORS, 'URLPREFIXEXIST', bdata["urlprefix"], site_id)
@@ -372,22 +537,33 @@ def edit_item(cuid, bdata):
     rec2edit._last_update = datetime.utcnow()
     rec2edit.validate()
     rec2edit.save()
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     #return {"newpaswd": "xxxxx"}, 200
     
 def delete_item(cuid):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
+    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
+        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
+    if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
+        return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
+
     try:
         rec2delete = SiteModel.get(cuid=cuid)
     except:
         return api_fail(SITES_ERRORS, 'NOTFOUND', cuid)
-    if (not CONFIG.fs.drivers.plugin_exist(CONFIG.fs.active)):
-        return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.fs.active)
 
     fs = CONFIG.fs.drivers.get_instance(CONFIG.fs.active, 'DasFs', tenant=tenant, bucket=tenant)
     if fs.exists('content/' + cuid):
         fs.rmtree('content/' + cuid)
+
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
+
     rec2delete.delete()
 
 def chgpwd_item(cuid, bdata):

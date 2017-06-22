@@ -1,0 +1,20 @@
+#!/usr/bin/with-contenv sh
+
+# Installation UUID must be informed
+if [ -z "$DASPANEL_SYS_UUID" ]; then
+    echo "***"
+    echo "ERROR: You must set the env variable DASPANEL_SYS_UUID to a valid UUID"
+    echo "***"
+    exit 1
+fi
+
+# Change dir to app root dir
+if [ ! -z "$GUNICORN_APP_DIR" ]; then
+    cd ${GUNICORN_APP_DIR}
+fi
+
+# Run gunicorn
+if [ ! -z "$GUNICORN_CMD" ]; then
+    exec ${GUNICORN_CMD}
+fi
+
