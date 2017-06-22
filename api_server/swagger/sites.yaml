@@ -1040,8 +1040,11 @@ definitions:
                 maxLength: 255
                 pattern: "(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-).)+[a-zA-Z]{2,63}$)"
             ssl:
-                type: boolean
-                description: Redirect had SSL cert
+                type: string
+                description: What type of SSL certificate
+                example: "self"
+                minLength: 1
+                maxLength: 32
             sslcert:
                 type: string
                 description: SSL cert file name
@@ -1226,8 +1229,11 @@ definitions:
                 maxLength: 255
                 pattern: "(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{1,63}(?<!-).)+[a-zA-Z]{2,63}$)"
             ssl:
-                type: boolean
-                description: Redirect had SSL cert
+                type: string
+                description: What type of SSL certificate
+                example: "self"
+                minLength: 1
+                maxLength: 32
             sslcert:
                 type: string
                 description: SSL cert file name
@@ -1304,8 +1310,11 @@ definitions:
                 minLength: 1
                 maxLength: 255
             ssl:
-                type: boolean
-                description: Redirect have SSL
+                type: string
+                description: What type of SSL certificate
+                example: "self"
+                minLength: 1
+                maxLength: 32
             sslcert:
                 type: string
                 description: SSL cert file name

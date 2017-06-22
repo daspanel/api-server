@@ -387,7 +387,7 @@ def get_httpconf(hostname):
                 'sitetype': version.sitetype,
                 'engine': version.runtime,
                 'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site._cuid, hostname),
-                'ssl': False,
+                'ssl': 'self',
                 'sslcert': '',
                 'certpath': '',
                 'dir': version.directory,
@@ -399,7 +399,7 @@ def get_httpconf(hostname):
                     'sitetype': version.sitetype,
                     'engine': version.runtime,
                     'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site.urlprefix, hostname),
-                    'ssl': False,
+                    'ssl': 'self',
                     'sslcert': '',
                     'certpath': '',
                     'dir': version.directory,
@@ -421,8 +421,8 @@ def get_httpconf(hostname):
                 'dir': host_version['directory'],
                 'domain': host.domain
             }
-            if host.ssl:
-                hrec['certpath'] = '/certs/{0}'.format(host.domain)
+            #if host.ssl:
+            hrec['certpath'] = '/certs/{0}'.format(host.domain)
             sitecfg['configs'].append(hrec)
             if host.hosturl == 'www':
                 hrec = {
@@ -435,8 +435,8 @@ def get_httpconf(hostname):
                     'dir': host_version['directory'],
                     'domain': host.domain
                 }
-                if host.ssl:
-                    hrec['certpath'] = '/certs/{0}'.format(host.domain)
+                #if host.ssl:
+                hrec['certpath'] = '/certs/{0}'.format(host.domain)
                 sitecfg['configs'].append(hrec)
 
         result, cur_version = site.get_version(site.active_version)
@@ -446,7 +446,7 @@ def get_httpconf(hostname):
             'sitetype': cur_version['sitetype'],
             'engine': cur_version['runtime'],
             'name': '{0}.sites.{1}'.format(site._cuid, hostname),
-            'ssl': False,
+            'ssl': 'self',
             'sslcert': '',
             'certpath': '',
             'dir': site.active_dir,
@@ -458,7 +458,7 @@ def get_httpconf(hostname):
                 'sitetype': cur_version['sitetype'],
                 'engine': cur_version['runtime'],
                 'name': '{0}.sites.{1}'.format(site.urlprefix, hostname),
-                'ssl': False,
+                'ssl': 'self',
                 'sslcert': '',
                 'certpath': '',
                 'dir': site.active_dir,
