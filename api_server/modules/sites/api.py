@@ -74,7 +74,6 @@ def redirects_edit_item(cuid, rcuid, bdata):
     redirects[vedit]['hosturl'] = bdata['hosturl']
     redirects[vedit]['domain'] = bdata['domain']
     redirects[vedit]['ssl'] = bdata['ssl']
-    redirects[vedit]['sslcert'] = bdata['sslcert']
     redirects[vedit]['version'] = bdata['version']
     site.redirects = redirects
     site._last_update = datetime.utcnow()
@@ -388,8 +387,6 @@ def get_httpconf(hostname):
                 'engine': version.runtime,
                 'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site._cuid, hostname),
                 'ssl': 'self',
-                'sslcert': '',
-                'certpath': '',
                 'dir': version.directory,
                 'domain': hostname
             }
@@ -400,8 +397,6 @@ def get_httpconf(hostname):
                     'engine': version.runtime,
                     'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site.urlprefix, hostname),
                     'ssl': 'self',
-                    'sslcert': '',
-                    'certpath': '',
                     'dir': version.directory,
                     'domain': hostname
                 }
@@ -416,8 +411,6 @@ def get_httpconf(hostname):
                 'engine': host_version['runtime'],
                 'name': '{0}.{1}'.format(host.hosturl, host.domain),
                 'ssl': host.ssl,
-                'sslcert': '',
-                'certpath': '/certs',
                 'dir': host_version['directory'],
                 'domain': host.domain
             }
@@ -430,8 +423,6 @@ def get_httpconf(hostname):
                     'engine': host_version['runtime'],
                     'name': '{0}'.format(host.domain),
                     'ssl': host.ssl,
-                    'sslcert': '',
-                    'certpath': '/certs',
                     'dir': host_version['directory'],
                     'domain': host.domain
                 }
@@ -447,8 +438,6 @@ def get_httpconf(hostname):
             'engine': cur_version['runtime'],
             'name': '{0}.sites.{1}'.format(site._cuid, hostname),
             'ssl': 'self',
-            'sslcert': '',
-            'certpath': '',
             'dir': site.active_dir,
             'domain': hostname
         }
@@ -459,8 +448,6 @@ def get_httpconf(hostname):
                 'engine': cur_version['runtime'],
                 'name': '{0}.sites.{1}'.format(site.urlprefix, hostname),
                 'ssl': 'self',
-                'sslcert': '',
-                'certpath': '',
                 'dir': site.active_dir,
                 'domain': hostname
             }

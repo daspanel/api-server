@@ -1022,8 +1022,6 @@ definitions:
             - hosturl
             - domain
             - ssl
-            - sslcert
-            - sslkey
             - version
         properties:
             hosturl:
@@ -1045,18 +1043,6 @@ definitions:
                 example: "self"
                 minLength: 1
                 maxLength: 32
-            sslcert:
-                type: string
-                description: SSL cert file name
-                example: "mycert.crt"
-                minLength: 0
-                maxLength: 255
-            sslkey:
-                type: string
-                description: SSL key file name
-                example: "mycert.key"
-                minLength: 0
-                maxLength: 255
             version:
                 type: string
                 description: Active version of the redirect
@@ -1234,18 +1220,6 @@ definitions:
                 example: "self"
                 minLength: 1
                 maxLength: 32
-            sslcert:
-                type: string
-                description: SSL cert file name
-                example: "mycert.crt"
-                minLength: 0
-                maxLength: 255
-            sslkey:
-                type: string
-                description: SSL key file name
-                example: "mycert.key"
-                minLength: 0
-                maxLength: 255
             _cuid:
                 type: string
                 description: Universal unique id of the redirect
@@ -1315,18 +1289,6 @@ definitions:
                 example: "self"
                 minLength: 1
                 maxLength: 32
-            sslcert:
-                type: string
-                description: SSL cert file name
-                example: "mycert.crt"
-                minLength: 0
-                maxLength: 255
-            sslpath:
-                type: string
-                description: Path where SSL certs are located
-                example: "mycerts/dir"
-                minLength: 0
-                maxLength: 255
             dir:
                 type: string
                 description: Directory root holding content of the site
