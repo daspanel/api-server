@@ -1,7 +1,7 @@
 version: '2'
 services:
     daspanel-lb:
-        image: daspanel/load-balancer-caddy:0.5.0
+        image: daspanel/load-balancer-caddy:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
@@ -13,7 +13,7 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-redis:
-        image: daspanel/redis:0.5.0
+        image: daspanel/redis:dev
         networks:
             - backend
         volumes:
@@ -22,13 +22,12 @@ services:
             - "6379"
         env_file:
             - daspanel.dev.env
-        #restart: always
     daspanel-api:
         image: daspanel/api-server:latest-dev
         volumes:
             - ./data:/opt/daspanel/data
             - .:/opt/daspanel/apps/apiserver
-            - ./container_data/opt/daspanel/conf-templates/caddy:/opt/daspanel/conf-templates/caddy
+            #- ./container_data/opt/daspanel/conf-templates/caddy:/opt/daspanel/conf-templates/caddy
         networks:
             - frontend
             - backend
@@ -42,7 +41,7 @@ services:
         expose:
             - "8080"
     daspanel-storage:
-        image: daspanel/minio-fileserver:0.3.0
+        image: daspanel/minio-fileserver:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
@@ -52,24 +51,24 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-services:
-        image: daspanel/daspanel-services:0.3.0
+        image: daspanel/daspanel-services:dev
         networks:
             - backend
         expose:
             - "443"
         env_file:
-            - daspanel.env
+            - daspanel.dev.env
     daspanel-mail-catcher:
-        image: daspanel/mailhog-mail-catcher:0.3.0
+        image: daspanel/mailhog-mail-catcher:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
             - frontend
             - backend
         env_file:
-            - daspanel.env
+            - daspanel.dev.env
     daspanel-mysql:
-        image: daspanel/mariadb:stable
+        image: daspanel/mariadb:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
@@ -81,7 +80,7 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-panel:
-        image: daspanel/panel:latest-dev
+        image: daspanel/svc-panel:dev
         volumes:
             - ./data:/opt/daspanel/data
             - /home/abner/Devel/abnerjacobsen/python/daspanel/panel:/opt/daspanel/apps/panel
@@ -92,11 +91,11 @@ services:
             - GUNICORN_APP_DIR=/opt/daspanel/apps/panel/daspanel_web
             - GUNICORN_CMD=su-exec daspanel:daspanel python /opt/daspanel/apps/panel/wsgi.py
         env_file:
-            - daspanel.env
+            - daspanel.dev.env
         expose:
             - "5000"
     daspanel-engine-php56:
-        image: daspanel/engine-php56:0.3.0
+        image: daspanel/engine-php56:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
@@ -106,7 +105,7 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-engine-php70:
-        image: daspanel/engine-php70:0.3.2
+        image: daspanel/engine-php70:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
@@ -116,7 +115,7 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-engine-php71:
-        image: daspanel/engine-php71:0.2.1
+        image: daspanel/engine-php71:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
@@ -126,13 +125,12 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-engine-static:
-        image: daspanel/engine-static:0.4.0
+        image: daspanel/engine-static:dev
         volumes:
             - ./data:/opt/daspanel/data
         networks:
             - backend
         expose:
-            - "80"
             - "443"
         env_file:
             - daspanel.dev.env
@@ -141,5 +139,4 @@ networks:
     driver: bridge
   backend:
     driver: bridge
-
 
