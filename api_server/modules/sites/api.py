@@ -8,6 +8,7 @@ from pprint import pprint
 
 # Daspanel system imports
 from lib.daspanel_uuid.uuid import UuidGen
+from lib.daspanel_uuid.names import get_random_name
 from lib.daspanel_errors import DASPANEL_ERRORS, error_msg
 
 # Load configuration
@@ -477,7 +478,7 @@ def new_item(bdata):
         return api_fail(DASPANEL_ERRORS, 'PSMISSINGDRIVER', CONFIG.pubsub.active)
 
     newrec = SiteModel(**bdata)
-    newrec.urlprefix = newrec._cuid
+    newrec.urlprefix = get_random_name()
     newrec._created_at = datetime.utcnow()
     newrec._last_update = newrec._created_at
     newver = SiteVersion()
