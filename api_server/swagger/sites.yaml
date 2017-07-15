@@ -1,7 +1,6 @@
 # https://raw.githubusercontent.com/adnan-kamili/swagger-response-template/master/swagger.yaml
 swagger: '2.0'
 info:
-    version: "1.0.0"
     title: DASPANEL Sites API
     description: |
 
