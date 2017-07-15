@@ -263,6 +263,39 @@ definitions:
                         example: "Ys309dLKds32jdssj8GqW32"
                         minLength: 8
                         maxLength: 40
+            mysql:
+                type: object
+                required:
+                    - server
+                    - port
+                    - user
+                    - password
+                description: MySql config
+                properties:
+                    server:
+                        type: string
+                        description: MySql server address
+                        example: "daspanel-mysql"
+                        minLength: 1
+                        maxLength: 255
+                    port:
+                        type: integer
+                        format: int32
+                        description: MySql server port
+                        default: 3306
+                    user:
+                        type: string
+                        description: MySql user (for future use)
+                        example: "root"
+                        minLength: 1
+                        maxLength: 255
+                    password:
+                        type: string
+                        description: MySql user password
+                        example: "civmw76wg000001p2dwqxpvet"
+                        minLength: 8
+                        maxLength: 32
+
     Message:
         type: object
         required:
