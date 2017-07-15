@@ -1,4 +1,3 @@
-#FROM daspanel/python2.7-gunicorn
 FROM daspanel/alpine-base
 MAINTAINER Abner G Jacobsen <admin@daspanel.com>
 
