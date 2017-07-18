@@ -23,7 +23,7 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-api:
-        image: daspanel/api-server:latest-dev
+        image: daspanel/svc-api:dev
         volumes:
             - ./data:/opt/daspanel/data
             - .:/opt/daspanel/apps/apiserver
