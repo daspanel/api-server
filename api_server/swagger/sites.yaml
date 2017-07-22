@@ -982,7 +982,7 @@ definitions:
                 example: "sitedev001"
                 minLength: 1
                 maxLength: 255
-                pattern: "^[a-zA-Z0-9-]+$"
+                pattern: "^[a-zA-Z0-9_-]+$"
     NewVersionItem:
         type: object
         required:
@@ -1112,7 +1112,7 @@ definitions:
                 example: "cir22a51g0005mw45ay17gkeh"
                 minLength: 1
                 maxLength: 255
-                pattern: "^[a-zA-Z0-9-]+$"
+                pattern: "^[a-zA-Z0-9_-]+$"
             versions:
                 type: array
                 items:
