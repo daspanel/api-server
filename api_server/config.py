@@ -86,7 +86,33 @@ daspanel.def_cfg['mysql']['server'] = 'daspanel-mysql'
 daspanel.def_cfg['mysql']['port'] = 3306
 daspanel.def_cfg['mysql']['user'] = 'root'
 daspanel.def_cfg['mysql']['password'] = daspanel.def_cfg['sys']['password']
-
+daspanel.def_cfg['engines'] = []
+daspanel.def_cfg['engines'].extend([
+    {'_cuid': 'cj5h6dqar0000325kybi7t8up', 'provider': 'DOCKER', 'runtime': 'php71', 'description': 'PHP 7.1', 'sitetypes': [
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP71'},
+        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
+        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
+        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
+        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
+    ]},
+    {'_cuid': 'cj5h6e0490000325kdnaltrcy', 'provider': 'DOCKER', 'runtime': 'php70', 'description': 'PHP 7.0', 'sitetypes': [
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP70'},
+        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
+        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
+        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
+        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
+    ]},
+    {'_cuid': 'cj5h6e68y0000325kq5k643q4', 'provider': 'DOCKER', 'runtime': 'php56', 'description': 'PHP 5.6', 'sitetypes': [
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP56'},
+        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
+        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
+        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
+        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
+    ]},
+    {'_cuid': 'cj5h6eczq0000325kx0i6534o', 'provider': 'DOCKER', 'runtime': 'static', 'description': 'Static', 'sitetypes': [
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - Static'}
+    ]}
+])
 
 # MySql
 mysql = ConfigSection("MySQL specific configuration")

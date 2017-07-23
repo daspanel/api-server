@@ -295,6 +295,74 @@ definitions:
                         example: "civmw76wg000001p2dwqxpvet"
                         minLength: 8
                         maxLength: 32
+            engines:
+                type: array
+                items:
+                    $ref: '#/definitions/EngineObj'
+
+    SiteTypeObj:
+        type: object
+        required:
+            - sitetype
+            - description
+        properties:
+            _cuid:
+                type: string
+                description: Universal unique id of the site type
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+            sitetype:
+                type: string
+                description: Site type identifier
+                example: "wordpress"
+                minLength: 1
+                maxLength: 64
+            description:
+                type: string
+                description: Description of the site type
+                example: "Wordpress 4.X"
+                minLength: 1
+                maxLength: 255
+
+    EngineObj:
+        type: object
+        required:
+            - provider
+            - runtime
+            - description
+            - sitetypes
+        properties:
+            _cuid:
+                type: string
+                description: Universal unique id of the engine
+                example: "cir22a51g0005mw45ay17gkeh"
+                minLength: 25
+                maxLength: 25
+                readOnly: true
+            provider:
+                type: string
+                description: Provider where the engine is running
+                example: "DOCKER"
+                minLength: 1
+                maxLength: 64
+            runtime:
+                type: string
+                description: Runtime/interpreter identifier
+                example: "php71"
+                minLength: 1
+                maxLength: 64
+            description:
+                type: string
+                description: Description of the engine
+                example: "PHP 7.1 standard"
+                minLength: 1
+                maxLength: 255
+            sitetypes:
+                type: array
+                items:
+                    $ref: '#/definitions/SiteTypeObj'
 
     Message:
         type: object
