@@ -380,6 +380,7 @@ def get_httpconf(hostname):
             '_cuid': site._cuid,
             'sitedescription': site.sitedescription,
             'enabled': True,
+            'admin': CONFIG.daspanel.def_cfg['sys']['admin'],
             'configs': []
         }
         for version in site.versions:

@@ -1248,6 +1248,12 @@ definitions:
                 minLength: 25
                 maxLength: 25
                 readOnly: true
+            admin:
+                type: string
+                description: Admin email
+                example: "admin@daspanel.site"
+                minLength: 1
+                maxLength: 255
             sitedescription:
                 type: string
                 description: Site name
