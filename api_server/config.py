@@ -68,24 +68,24 @@ daspanel.def_cfg['smtp'] = {}
 daspanel.def_cfg['smtp']['type'] = 'mail-catcher'
 daspanel.def_cfg['smtp']['server'] = 'daspanel-mail-catcher:1025'
 daspanel.def_cfg['smtp']['user'] = daspanel.def_cfg['sys']['admin']
-daspanel.def_cfg['smtp']['password'] = os.getenv('DASPANEL_SYS_UUID', gen_pass())
+daspanel.def_cfg['smtp']['password'] = os.getenv('DASPANEL_SYS_UUID')
 daspanel.def_cfg['redis'] = {}
 daspanel.def_cfg['redis']['server'] = 'daspanel-redis'
 daspanel.def_cfg['redis']['port'] = 6379
 daspanel.def_cfg['redis']['database'] = 0
 daspanel.def_cfg['redis']['user'] = ''
-daspanel.def_cfg['redis']['password'] = os.getenv('DASPANEL_SYS_UUID', gen_pass())
+daspanel.def_cfg['redis']['password'] = gen_pass()
 daspanel.def_cfg['s3'] = {}
 daspanel.def_cfg['s3']['browser_url'] = 'https://s3.svc.{0}'.format(daspanel.def_cfg['sys']['hostname'])
 daspanel.def_cfg['s3']['endpoint'] = 'https://s3.svc.{0}'.format(daspanel.def_cfg['sys']['hostname'])
 daspanel.def_cfg['s3']['region'] = 'us-east-1'
 daspanel.def_cfg['s3']['access_key'] = os.getenv('DASPANEL_SYS_UUID')[0:20]
-daspanel.def_cfg['s3']['secret_key'] = daspanel.def_cfg['sys']['password']
+daspanel.def_cfg['s3']['secret_key'] = gen_pass()
 daspanel.def_cfg['mysql'] = {}
 daspanel.def_cfg['mysql']['server'] = 'daspanel-mysql'
 daspanel.def_cfg['mysql']['port'] = 3306
-daspanel.def_cfg['mysql']['user'] = 'root'
-daspanel.def_cfg['mysql']['password'] = daspanel.def_cfg['sys']['password']
+daspanel.def_cfg['mysql']['user'] = os.getenv('DASPANEL_SYS_UUID')
+daspanel.def_cfg['mysql']['password'] = gen_pass()
 daspanel.def_cfg['engines'] = []
 daspanel.def_cfg['engines'].extend([
     {'_cuid': 'cj5h6dqar0000325kybi7t8up', 'provider': 'DOCKER', 'runtime': 'php71', 'description': 'PHP 7.1', 'sitetypes': [
@@ -114,22 +114,15 @@ daspanel.def_cfg['engines'].extend([
     ]}
 ])
 
-# MySql
-mysql = ConfigSection("MySQL specific configuration")
-mysql.user = 'root'
-mysql.pwd = 'secret'
-mysql.host = 'localhost'
-mysql.port = 3306
-mysql.database = 'mydb'
-print("Loading MySql config: ", mysql)
-
-# Redis
-redis = ConfigSection("Redis configuration")
-redis.host = 'daspanel-redis'
-redis.port = 6379
-redis.db = '0'
-redis.password = None
-print("Loading Redis config: ", redis)
+# Loads existing tenant config or create a new one if missing
+config_file = '/opt/daspanel/data/{0}/db/{0}.json'.format(os.getenv('DASPANEL_SYS_UUID'))
+if os.path.exists(config_file):
+    with open(config_file, 'r') as fp:
+        #tenant_cfg = json.load(fp)
+        daspanel.def_cfg.update(json.load(fp))
+else:
+    with open(config_file, 'w') as fp:
+        json.dump(daspanel.def_cfg, fp, ensure_ascii=False)
 
 sites = ConfigSection("Sites module drivers")
 print("Loading config: ", sites)
