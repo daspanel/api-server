@@ -7,8 +7,8 @@ from redis import Redis
 class PluginParams(dict):
     def __init__(self, **params):
         self['tenant'] = None
-        self['host'] = 'daspanel-redis'
-        self['db'] = 0
+        self['server'] = 'daspanel-redis'
+        self['database'] = 0
         self['port'] = 6379
         self['password'] = self['tenant']
 
@@ -27,9 +27,9 @@ class DasPubSub(object):
 
         # Redis connection
         self.conn = Redis(
-            host=self._params.host, 
+            host=self._params.server, 
             port=self._params.port, 
-            db=self._params.db, 
+            db=self._params.database, 
             password=self._params.password
         )
 

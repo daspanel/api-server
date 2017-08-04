@@ -158,6 +158,8 @@ for drv in drvlist:
     if (not pubsub.drivers.load(name=drv)):
         raise ValueError("Can not load pubsub driver: {0}".format(drv))
 pubsub.active = 'redis'
+pubsub.cfg = {}
+pubsub.cfg['redis'] = daspanel.def_cfg['redis']
 
 # Tenant drivers
 tenant = ConfigSection("Tenant drivers")
