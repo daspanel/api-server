@@ -587,7 +587,9 @@ right = [
   'yonath',
 ]
 
-def get_random_name(sep='_'):
+# GRAV have a problem when sep is underscore
+# https://github.com/getgrav/grav-plugin-admin/issues/931
+def get_random_name(sep='-'):
     r = random.SystemRandom()
     while 1:
         name = '%s%s%s' % (r.choice(left), sep, r.choice(right))
