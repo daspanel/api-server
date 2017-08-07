@@ -375,6 +375,13 @@ def get_httpconf(hostname):
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     sites = SiteModel.all()
     entries = []
+
+    # Defaul ssl cert type
+    if (hostname == 'daspanel.site'):
+        ssl_type = 'self'
+    else:
+        ssl_type = 'auto'
+
     for site in sites:
         sitecfg = {
             '_cuid': site._cuid,
@@ -388,7 +395,7 @@ def get_httpconf(hostname):
                 'sitetype': version.sitetype,
                 'engine': version.runtime,
                 'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site._cuid, hostname),
-                'ssl': 'self',
+                'ssl': ssl_type,
                 'dir': version.directory,
                 'domain': hostname
             }
@@ -398,7 +405,7 @@ def get_httpconf(hostname):
                     'sitetype': version.sitetype,
                     'engine': version.runtime,
                     'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site.urlprefix, hostname),
-                    'ssl': 'self',
+                    'ssl': ssl_type,
                     'dir': version.directory,
                     'domain': hostname
                 }
@@ -439,7 +446,7 @@ def get_httpconf(hostname):
             'sitetype': cur_version['sitetype'],
             'engine': cur_version['runtime'],
             'name': '{0}.sites.{1}'.format(site._cuid, hostname),
-            'ssl': 'self',
+            'ssl': ssl_type,
             'dir': site.active_dir,
             'domain': hostname
         }
@@ -449,7 +456,7 @@ def get_httpconf(hostname):
                 'sitetype': cur_version['sitetype'],
                 'engine': cur_version['runtime'],
                 'name': '{0}.sites.{1}'.format(site.urlprefix, hostname),
-                'ssl': 'self',
+                'ssl': ssl_type,
                 'dir': site.active_dir,
                 'domain': hostname
             }
