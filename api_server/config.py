@@ -53,14 +53,15 @@ class ConfigSection(object):
 
 
 daspanel = ConfigSection("DASPANEL config")
-daspanel.host = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
+daspanel.hostname = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
 daspanel.cfg_version = '0.1.0'
 daspanel.def_cfg = {}
 daspanel.def_cfg['sys'] = {}
+daspanel.def_cfg['sys']['hostname'] = daspanel.hostname
+daspanel.def_cfg['sys']['host'] = daspanel.hostname
 daspanel.def_cfg['sys']['config_version'] = '0.1.0'
-daspanel.def_cfg['sys']['hostname'] = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
 daspanel.def_cfg['sys']['apiserver'] = os.getenv('DASPANEL_SYS_APISERVER', 'http://daspanel-api:8080/1.0')
-daspanel.def_cfg['sys']['admin'] = os.getenv('DASPANEL_SYS_ADMIN', 'admin@{0}'.format(daspanel.def_cfg['sys']['hostname']))
+daspanel.def_cfg['sys']['admin'] = os.getenv('DASPANEL_SYS_ADMIN', 'admin@{0}'.format(daspanel.hostname))
 daspanel.def_cfg['sys']['password'] = os.getenv('DASPANEL_SYS_PASSWORD', gen_pass())
 daspanel.def_cfg['sys']['msghub'] = os.getenv('DASPANEL_SYS_MSGHUB', 'mail-catcher')
 daspanel.def_cfg['sys']['debug'] = os.getenv('DASPANEL_SYS_DEBUG', False)
@@ -76,8 +77,8 @@ daspanel.def_cfg['redis']['database'] = 0
 daspanel.def_cfg['redis']['user'] = ''
 daspanel.def_cfg['redis']['password'] = gen_pass()
 daspanel.def_cfg['s3'] = {}
-daspanel.def_cfg['s3']['browser_url'] = 'https://s3.svc.{0}'.format(daspanel.def_cfg['sys']['hostname'])
-daspanel.def_cfg['s3']['endpoint'] = 'https://s3.svc.{0}'.format(daspanel.def_cfg['sys']['hostname'])
+daspanel.def_cfg['s3']['browser_url'] = 'https://s3.svc.{0}'.format(daspanel.hostname)
+daspanel.def_cfg['s3']['endpoint'] = 'https://s3.svc.{0}'.format(daspanel.hostname)
 daspanel.def_cfg['s3']['region'] = 'us-east-1'
 daspanel.def_cfg['s3']['access_key'] = os.getenv('DASPANEL_SYS_UUID')[0:20]
 daspanel.def_cfg['s3']['secret_key'] = gen_pass()
@@ -120,6 +121,13 @@ if os.path.exists(config_file):
     with open(config_file, 'r') as fp:
         #tenant_cfg = json.load(fp)
         daspanel.def_cfg.update(json.load(fp))
+    # If hostname has changed
+    if (not daspanel.def_cfg['sys']['hostname'] == daspanel.hostname):
+        daspanel.def_cfg['sys']['hostname'] = daspanel.hostname
+        daspanel.def_cfg['sys']['host'] = daspanel.hostname
+        with open(config_file, 'w') as fp:
+            json.dump(daspanel.def_cfg, fp, ensure_ascii=False)
+
 else:
     with open(config_file, 'w') as fp:
         json.dump(daspanel.def_cfg, fp, ensure_ascii=False)
