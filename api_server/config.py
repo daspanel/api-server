@@ -114,6 +114,9 @@ daspanel.def_cfg['engines'].extend([
         {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - Static'}
     ]}
 ])
+daspanel.def_cfg['filemanager'] = {}
+daspanel.def_cfg['filemanager']['user'] = daspanel.def_cfg['sys']['admin']
+daspanel.def_cfg['filemanager']['password'] = gen_pass()
 
 # Loads existing tenant config or create a new one if missing
 config_file = '/opt/daspanel/data/{0}/db/{0}.json'.format(os.getenv('DASPANEL_SYS_UUID'))
@@ -131,6 +134,7 @@ if os.path.exists(config_file):
 else:
     with open(config_file, 'w') as fp:
         json.dump(daspanel.def_cfg, fp, ensure_ascii=False)
+
 
 sites = ConfigSection("Sites module drivers")
 print("Loading config: ", sites)

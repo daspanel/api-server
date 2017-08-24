@@ -51,9 +51,7 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-services:
-        image: daspanel/daspanel-services:dev
-        volumes:
-            - ./data:/opt/daspanel/data
+        image: daspanel/daspanel-services:latest
         networks:
             - backend
         expose:
@@ -91,7 +89,7 @@ services:
             - backend
         environment:
             - GUNICORN_APP_DIR=/opt/daspanel/apps/panel/daspanel_web
-            - GUNICORN_CMD=su-exec daspanel:daspanel python /opt/daspanel/apps/panel/wsgi.py
+            - GUNICORN_CMD=/opt/daspanel/apps/panel/daspanel_web/wsgi_gunicorn --bind=0.0.0.0:5000 --user=daspanel --group=daspanel app:app Daspanel_Panel
         env_file:
             - daspanel.dev.env
         expose:

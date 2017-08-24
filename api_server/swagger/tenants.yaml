@@ -299,6 +299,26 @@ definitions:
                 type: array
                 items:
                     $ref: '#/definitions/EngineObj'
+            filemanager:
+                type: object
+                required:
+                    - user
+                    - password
+                description: File manager config
+                properties:
+                    user:
+                        type: string
+                        description: Filemanager user
+                        example: "admin@daspanel.site"
+                        minLength: 1
+                        maxLength: 255
+                    password:
+                        type: string
+                        description: Filemanager user password
+                        example: "civmw76wg000001p2dwqxpvet"
+                        minLength: 8
+                        maxLength: 32
+
 
     SiteTypeObj:
         type: object
