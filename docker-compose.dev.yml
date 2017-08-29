@@ -51,7 +51,7 @@ services:
         env_file:
             - daspanel.dev.env
     daspanel-services:
-        image: daspanel/daspanel-services:latest
+        image: daspanel/daspanel-services:dev
         networks:
             - backend
         expose:

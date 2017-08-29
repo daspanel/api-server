@@ -13,6 +13,7 @@ from __future__ import absolute_import, division, print_function
 from __about__ import *
 import os
 import connexion
+from flask_cors import CORS
 import datetime
 import logging
 
@@ -31,4 +32,7 @@ app.add_api('swagger/sites.yaml', base_path='/1.0/sites')
 # Trick: app.app is the Flask app object inside Connexion app object
 flask_app = app.app
 flask_app.logger_name = "daspanel_api_server"
+
+# add CORS support
+CORS(app.app)
 

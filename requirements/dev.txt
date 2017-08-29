@@ -1,4 +1,5 @@
 flask==0.12.1
+Flask-Cors==3.0.3
 jsonschema==2.6.0
 jsonmodels==2.1.5
 tinydb==3.2.2
