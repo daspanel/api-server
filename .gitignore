@@ -31,3 +31,4 @@ Docker/local/Dockerfile
 Docker/local/rootfs/
 buildlog.txt
 data/
+.cache
