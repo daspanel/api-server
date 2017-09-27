@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, division, print_function
-import os, random, string, json
+import os, random, string, json, copy
 
 try:
     from daspanel_plugin import PluginCollection
@@ -54,12 +54,12 @@ class ConfigSection(object):
 
 daspanel = ConfigSection("DASPANEL config")
 daspanel.hostname = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
-daspanel.cfg_version = '0.1.0'
+daspanel.cfg_version = '0.1.1'
 daspanel.def_cfg = {}
 daspanel.def_cfg['sys'] = {}
 daspanel.def_cfg['sys']['hostname'] = daspanel.hostname
 daspanel.def_cfg['sys']['host'] = daspanel.hostname
-daspanel.def_cfg['sys']['config_version'] = '0.1.0'
+daspanel.def_cfg['sys']['config_version'] = daspanel.cfg_version
 daspanel.def_cfg['sys']['apiserver'] = os.getenv('DASPANEL_SYS_APISERVER', 'http://daspanel-api:8080/1.0')
 daspanel.def_cfg['sys']['admin'] = os.getenv('DASPANEL_SYS_ADMIN', 'admin@{0}'.format(daspanel.hostname))
 daspanel.def_cfg['sys']['password'] = os.getenv('DASPANEL_SYS_PASSWORD', gen_pass())
@@ -107,6 +107,8 @@ daspanel.def_cfg['engines'].extend([
         {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP56'},
         {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
         {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
+        {'_cuid': '', 'sitetype': 'laravel5x', 'description': 'Laravel 5.X'},
+        {'_cuid': '', 'sitetype': 'codeigniter3x', 'description': 'CodeIgniter 3.X'},
         {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
         {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
     ]},
@@ -118,12 +120,41 @@ daspanel.def_cfg['filemanager'] = {}
 daspanel.def_cfg['filemanager']['user'] = daspanel.def_cfg['sys']['admin']
 daspanel.def_cfg['filemanager']['password'] = gen_pass()
 
+# Tenant saved config
+daspanel.tenant_cfg = {}
+
 # Loads existing tenant config or create a new one if missing
 config_file = '/opt/daspanel/data/{0}/db/{0}.json'.format(os.getenv('DASPANEL_SYS_UUID'))
 if os.path.exists(config_file):
     with open(config_file, 'r') as fp:
         #tenant_cfg = json.load(fp)
         daspanel.def_cfg.update(json.load(fp))
+        #cfg_data = json.load(fp)
+
+    # Config format changed
+    if (not daspanel.def_cfg['sys']['config_version'] == daspanel.cfg_version):
+        try:
+            from daspanel_migrate import TinyDbMigrate
+        except:
+            from lib.daspanel_migrate import TinyDbMigrate
+
+        print("*** WARNING: Config database using old version ***")
+        daspanel.tenant_cfg = copy.deepcopy(daspanel.def_cfg)
+        upg_cfg = TinyDbMigrate(daspanel.tenant_cfg['sys']['config_version'], 
+            daspanel.cfg_version, daspanel.tenant_cfg)
+
+        if not upg_cfg.migrate():
+            print("\n==== Migrate Failed ====")
+            for step, status in upg_cfg.steps_done.items():
+                print(step, status)
+        else:
+            print("\n==== Migrate Success ====")
+            with open(config_file, 'w') as fp:
+                json.dump(upg_cfg.to_data, fp, ensure_ascii=False)
+            daspanel.tenant_cfg = copy.deepcopy(upg_cfg.to_data)
+            # Temporary
+            daspanel.def_cfg = copy.deepcopy(upg_cfg.to_data)
+
     # If hostname has changed
     if (not daspanel.def_cfg['sys']['hostname'] == daspanel.hostname):
         daspanel.def_cfg['sys']['hostname'] = daspanel.hostname
