@@ -17,7 +17,14 @@ def to_011(cfg_data):
 def to_012(cfg_data):
     tmp_data = copy.deepcopy(cfg_data)
     tmp_data["sys"]["config_version"] = "0.1.2"
+    for item in tmp_data["engines"]:
+        if item["runtime"] == "php71":
+            item["sitetypes"].extend([
+                {"_cuid": "", "sitetype": "laravel5x", "description": "Laravel 5.X"},
+                {"_cuid": "", "sitetype": "codeigniter3x", "description": "CodeIgniter 3.X"}
+            ])
     return tmp_data
+
 
 
 class TinyDbMigrate(object):

@@ -54,7 +54,7 @@ class ConfigSection(object):
 
 daspanel = ConfigSection("DASPANEL config")
 daspanel.hostname = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
-daspanel.cfg_version = '0.1.1'
+daspanel.cfg_version = '0.1.2'
 daspanel.def_cfg = {}
 daspanel.def_cfg['sys'] = {}
 daspanel.def_cfg['sys']['hostname'] = daspanel.hostname
@@ -93,6 +93,8 @@ daspanel.def_cfg['engines'].extend([
         {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP71'},
         {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
         {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
+        {'_cuid': '', 'sitetype': 'laravel5x', 'description': 'Laravel 5.X'},
+        {'_cuid': '', 'sitetype': 'codeigniter3x', 'description': 'CodeIgniter 3.X'},
         {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
         {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
     ]},
