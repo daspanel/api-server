@@ -8,6 +8,8 @@ from distutils.dir_util import copy_tree
 
 # http://stackoverflow.com/questions/28035685/improper-use-of-new-to-generate-classes
 
+ROOT_FILES = ['index.php','index.html','composer.json','package.json']
+
 class PluginParams(dict):
     def __init__(self, **params):
         self['tenant'] = None
@@ -141,18 +143,20 @@ class DasFs(object):
         with zipfile.ZipFile(full_path, "r") as z:
             for zfile in z.namelist():
                 zfile = os.path.split(zfile)
-                if zfile[1] == 'index.html' or zfile[1] == 'index.php':
+                #if zfile[1] == 'index.html' or zfile[1] == 'index.php':
+                if zfile[1] in ROOT_FILES:
                     print(zfile)
                     result = True
                     break
         return result
 
-    def site_root(self, dir):
+    def site_root(self, top_dir, index_list=ROOT_FILES):
         index_dir = None
-        dir_full_path = '{0}{1}'.format(self._params.datadir, dir)
+        dir_full_path = '{0}{1}'.format(self._params.datadir, top_dir)
         print("FS.SITE_ROOT: ", dir_full_path)
         for root, dirs, files in os.walk(dir_full_path):
-            if 'index.html' in files or 'index.php' in files:
+            #if 'index.html' in files or 'index.php' in files:
+            if any((True for item in index_list if item in files)):
                 index_dir = root.replace(self._params.datadir, '')
                 break
         return index_dir

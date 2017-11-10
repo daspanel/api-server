@@ -30,7 +30,7 @@ from .errors import SITES_ERRORS
 from connexion import NoContent, request
 from daspanel_connexion_utils import api_fail
 
-def     install_remotezip(cuid, bdata):
+def install_remotezip(cuid, bdata):
     tenant = request.headers['Authorization']
     if not tenant == os.environ['DASPANEL_SYS_UUID']:
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
@@ -73,9 +73,10 @@ def     install_remotezip(cuid, bdata):
         fs.extract_zip(tmp_file, tmp_dir)
         fs.remove(tmp_file)
 
-        content_root = fs.site_root(tmp_dir)
+        root_files = ['index.php','index.html','composer.json','package.json']
+        content_root = fs.site_root(tmp_dir, root_files)
         if content_root == None:
-            fs.remove(tmp_file)
+            #fs.remove(tmp_file)
             fs.rmtree(tmp_dir)
             return api_fail(SITES_ERRORS, 'CONTENTWITHOUTINDEX', bdata['url'])
 
