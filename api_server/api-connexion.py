@@ -11,7 +11,7 @@ Daspanel API server
 """
 from __future__ import absolute_import, division, print_function
 from __about__ import *
-import os
+import os, sys
 import connexion
 from flask_cors import CORS
 import datetime
@@ -20,6 +20,20 @@ import logging
 import config as CONFIG
 
 logger = logging.getLogger(__name__)
+
+from modules.sites.models.tinyj import SITES_DB_FMT
+from modules.sites.db_migration import SitesDbMigrate
+upg_sites = SitesDbMigrate(SITES_DB_FMT)
+if not upg_sites.migrate():
+    print("\n==== Sites DB Migrate Failed ====")
+    for step, status in upg_sites.steps_done.items():
+        print(step, status)
+    sys.exit()
+else:
+    print("\n==== Sites DB Migrate Success ====")
+
+del(SITES_DB_FMT)
+del(SitesDbMigrate)
 
 # Create Connexion app
 app = connexion.App(__name__)
