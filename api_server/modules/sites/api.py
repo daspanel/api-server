@@ -6,6 +6,8 @@ from datetime import datetime
 import logging
 from pprint import pprint
 
+logger = logging.getLogger(__name__)
+
 # Daspanel system imports
 from lib.daspanel_uuid.uuid import UuidGen
 from lib.daspanel_uuid.names import get_random_name
@@ -496,6 +498,7 @@ def new_item(bdata):
     newver.sitetype = bdata['sitetype']
     newver.runtime = bdata['runtime']
     newver.directory = 'content/' + newrec._cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
+    newver.root_dir = '/'
     newver.validate()
     newrec.versions.append(newver)
     newrec.active_version = newver._cuid
@@ -576,7 +579,4 @@ def chgpwd_item(cuid, bdata):
         uuid = UuidGen()
         newpwd = uuid.gen_pass()
     return {"password": newpwd}, 200
-
-
-
 
