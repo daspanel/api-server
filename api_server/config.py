@@ -54,7 +54,7 @@ class ConfigSection(object):
 
 daspanel = ConfigSection("DASPANEL config")
 daspanel.hostname = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
-daspanel.cfg_version = '0.1.2'
+daspanel.cfg_version = '0.1.6'
 daspanel.def_cfg = {}
 daspanel.def_cfg['sys'] = {}
 daspanel.def_cfg['sys']['hostname'] = daspanel.hostname
@@ -90,32 +90,37 @@ daspanel.def_cfg['mysql']['password'] = gen_pass()
 daspanel.def_cfg['engines'] = []
 daspanel.def_cfg['engines'].extend([
     {'_cuid': 'cj5h6dqar0000325kybi7t8up', 'provider': 'DOCKER', 'runtime': 'php71', 'description': 'PHP 7.1', 'sitetypes': [
-        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP71'},
-        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
-        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
-        {'_cuid': '', 'sitetype': 'laravel5x', 'description': 'Laravel 5.X'},
-        {'_cuid': '', 'sitetype': 'codeigniter3x', 'description': 'CodeIgniter 3.X'},
-        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
-        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'laravel5x', 'description': 'Laravel 5.X', 'root_dir': '/public'},
+        {'_cuid': '', 'sitetype': 'codeigniter3x', 'description': 'CodeIgniter 3.X', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X', 'root_dir': '/app/webroot'},
+        {'_cuid': '', 'sitetype': 'symfony', 'description': 'Symfony Framework', 'root_dir': '/web'},
+        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X', 'root_dir': '/'}
     ]},
     {'_cuid': 'cj5h6e0490000325kdnaltrcy', 'provider': 'DOCKER', 'runtime': 'php70', 'description': 'PHP 7.0', 'sitetypes': [
-        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP70'},
-        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
-        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
-        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
-        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'laravel5x', 'description': 'Laravel 5.X', 'root_dir': '/public'},
+        {'_cuid': '', 'sitetype': 'codeigniter3x', 'description': 'CodeIgniter 3.X', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X', 'root_dir': '/app/webroot'},
+        {'_cuid': '', 'sitetype': 'symfony', 'description': 'Symfony Framework', 'root_dir': '/web'},
+        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X', 'root_dir': '/'}
     ]},
     {'_cuid': 'cj5h6e68y0000325kq5k643q4', 'provider': 'DOCKER', 'runtime': 'php56', 'description': 'PHP 5.6', 'sitetypes': [
-        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - PHP56'},
-        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS'},
-        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X'},
-        {'_cuid': '', 'sitetype': 'laravel5x', 'description': 'Laravel 5.X'},
-        {'_cuid': '', 'sitetype': 'codeigniter3x', 'description': 'CodeIgniter 3.X'},
-        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X'},
-        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X'}
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'grav', 'description': 'Grav flat-file CMS', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'wordpress', 'description': 'Wordpress 4.X', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'laravel5x', 'description': 'Laravel 5.X', 'root_dir': '/public'},
+        {'_cuid': '', 'sitetype': 'codeigniter3x', 'description': 'CodeIgniter 3.X', 'root_dir': '/'},
+        {'_cuid': '', 'sitetype': 'cakephp2x', 'description': 'CakePHP 2.X', 'root_dir': '/app/webroot'},
+        {'_cuid': '', 'sitetype': 'symfony', 'description': 'Symfony Framework', 'root_dir': '/web'},
+        {'_cuid': '', 'sitetype': 'nextcloud12x', 'description': 'Nextcloud 12.X', 'root_dir': '/'}
     ]},
     {'_cuid': 'cj5h6eczq0000325kx0i6534o', 'provider': 'DOCKER', 'runtime': 'static', 'description': 'Static', 'sitetypes': [
-        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site - Static'}
+        {'_cuid': '', 'sitetype': 'generic', 'description': 'Generic site', 'root_dir': '/'}
     ]}
 ])
 daspanel.def_cfg['filemanager'] = {}
