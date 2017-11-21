@@ -10,7 +10,7 @@ from jsonmodels import models, validators
 
 dbucket = os.environ['DASPANEL_SYS_UUID']
 DASPANEL_DATABASESFILE = '/opt/daspanel/data/' + dbucket + '/db/daspanel-sites.json'
-SITES_DB_FMT = '0.1.0'
+SITES_DB_FMT = '0.1.3'
 
 # Open sites database, creating it if not exists
 SITES_DB = Database(DASPANEL_DATABASESFILE)
@@ -24,7 +24,7 @@ class SiteVersion(TinyJsonModel):
     directory = fields.StringField(required=True, validators=[validators.Length(1, 255)])
     sitetype = fields.StringField(required=False, validators=[validators.Length(0, 64)])
     runtime = fields.StringField(required=False, validators=[validators.Length(0, 64)])
-
+    root_dir = fields.StringField(required=True, validators=[validators.Length(1, 255)])
 
 class SiteRedirects(TinyJsonModel):
     __tablename__ = "siteredirects"
@@ -42,8 +42,8 @@ class SiteModel(TinyJsonModel):
     redirects = fields.ListField(['SiteRedirects'])
     active_version = fields.StringField(required=True, validators=[validators.Length(25, 25)])
     active_dir = fields.StringField(required=True, validators=[validators.Length(1, 255)])
-    _last_update = fields.DateTimeField(required=True)
-    _created_at = fields.DateTimeField(required=True)
+    _last_update = fields.DateTimeField(required=False)
+    _created_at = fields.DateTimeField(required=False)
     _fmt_version = fields.StringField(required=False)
 
     def save(self):
