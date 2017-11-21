@@ -1093,6 +1093,11 @@ definitions:
                 description: Last update time
                 example: "2016-07-25T13:20:41"
                 readOnly: true
+            _fmt_version:
+                type: string
+                description: Document/record format version
+                example: "0.1.0"
+                readOnly: true
             _cuid:
                 type: string
                 description: Universal unique id of the database
