@@ -208,7 +208,7 @@ def versions_clone(cuid, vcuid):
     newver.date = datetime.utcnow()
     newver.description = 'Clone of version: ' + versions[vedit]['description']
     newver.tag = '0.1.0'
-    newver.directory = 'content/' + cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
+    newver.directory = 'content/' + cuid + '/v/' + newver._cuid
     newver.root_dir = versions[vedit]["root_dir"]
     newver.sitetype = versions[vedit]["sitetype"]
     newver.runtime = versions[vedit]["runtime"]
@@ -348,7 +348,7 @@ def versions_new_item(cuid, bdata):
 
     newver = SiteVersion(**bdata)
     newver.date = datetime.utcnow()
-    newver.directory = 'content/' + cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
+    newver.directory = 'content/' + cuid + '/v/' + newver._cuid
     newver.root_dir = '/'
     is_looping = True
     for v in CONFIG.daspanel.def_cfg['engines']:
@@ -516,7 +516,7 @@ def new_item(bdata):
     newver.tag = '0.1.0'
     newver.sitetype = bdata['sitetype']
     newver.runtime = bdata['runtime']
-    newver.directory = 'content/' + newrec._cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
+    newver.directory = 'content/' + newrec._cuid + '/v/' + newver._cuid
     newver.root_dir = '/'
 
     is_looping = True
