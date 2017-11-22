@@ -209,6 +209,7 @@ def versions_clone(cuid, vcuid):
     newver.description = 'Clone of version: ' + versions[vedit]['description']
     newver.tag = '0.1.0'
     newver.directory = 'content/' + cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
+    newver.root_dir = versions[vedit]["root_dir"]
     newver.sitetype = versions[vedit]["sitetype"]
     newver.runtime = versions[vedit]["runtime"]
     newver.validate()
@@ -249,6 +250,7 @@ def versions_edit_item(cuid, vcuid, bdata):
     versions[vedit]['tag'] = bdata['tag']
     versions[vedit]['sitetype'] = bdata["sitetype"]
     versions[vedit]['runtime'] = bdata["runtime"]
+    versions[vedit]['root_dir'] = bdata["root_dir"]
 
     site.versions = versions
     site._last_update = datetime.utcnow()
@@ -347,6 +349,17 @@ def versions_new_item(cuid, bdata):
     newver = SiteVersion(**bdata)
     newver.date = datetime.utcnow()
     newver.directory = 'content/' + cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
+    newver.root_dir = '/'
+    is_looping = True
+    for v in CONFIG.daspanel.def_cfg['engines']:
+        if v['runtime'] == bdata['runtime']:
+            for s in v['sitetypes']:
+                if s['sitetype'] == bdata['sitetype']:
+                    newver.root_dir = s['root_dir']
+                    is_looping = False
+                    break
+            if not is_looping:
+                break
     newver.validate()
     site.versions.append(newver)
     site._last_update = datetime.utcnow()
@@ -399,6 +412,7 @@ def get_httpconf(hostname):
                 'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site._cuid, hostname),
                 'ssl': ssl_type,
                 'dir': version.directory,
+                'root_dir': version.root_dir,
                 'domain': hostname
             }
             sitecfg['configs'].append(vrec)
@@ -409,6 +423,7 @@ def get_httpconf(hostname):
                     'name': '{0}.v.{1}.sites.{2}'.format(version._cuid, site.urlprefix, hostname),
                     'ssl': ssl_type,
                     'dir': version.directory,
+                    'root_dir': version.root_dir,
                     'domain': hostname
                 }
                 sitecfg['configs'].append(vrec)
@@ -423,6 +438,7 @@ def get_httpconf(hostname):
                 'name': '{0}.{1}'.format(host.hosturl, host.domain),
                 'ssl': host.ssl,
                 'dir': host_version['directory'],
+                'root_dir': host_version['root_dir'],
                 'domain': host.domain
             }
             #if host.ssl:
@@ -435,6 +451,7 @@ def get_httpconf(hostname):
                     'name': '{0}'.format(host.domain),
                     'ssl': host.ssl,
                     'dir': host_version['directory'],
+                    'root_dir': host_version['root_dir'],
                     'domain': host.domain
                 }
                 #if host.ssl:
@@ -449,7 +466,8 @@ def get_httpconf(hostname):
             'engine': cur_version['runtime'],
             'name': '{0}.sites.{1}'.format(site._cuid, hostname),
             'ssl': ssl_type,
-            'dir': site.active_dir,
+            'dir': cur_version['directory'],
+            'root_dir': cur_version['root_dir'],
             'domain': hostname
         }
         sitecfg['configs'].append(master)
@@ -459,7 +477,8 @@ def get_httpconf(hostname):
                 'engine': cur_version['runtime'],
                 'name': '{0}.sites.{1}'.format(site.urlprefix, hostname),
                 'ssl': ssl_type,
-                'dir': site.active_dir,
+                'dir': cur_version['directory'],
+                'root_dir': cur_version['root_dir'],
                 'domain': hostname
             }
             sitecfg['configs'].append(master)
@@ -499,6 +518,18 @@ def new_item(bdata):
     newver.runtime = bdata['runtime']
     newver.directory = 'content/' + newrec._cuid + '/v/' + '{:%Y-%m-%d-%H%M%S-%f}'.format(newver.date)
     newver.root_dir = '/'
+
+    is_looping = True
+    for v in CONFIG.daspanel.def_cfg['engines']:
+        if v['runtime'] == bdata['runtime']:
+            for s in v['sitetypes']:
+                if s['sitetype'] == bdata['sitetype']:
+                    newver.root_dir = s['root_dir']
+                    is_looping = False
+                    break
+            if not is_looping:
+                break
+
     newver.validate()
     newrec.versions.append(newver)
     newrec.active_version = newver._cuid

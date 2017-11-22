@@ -732,7 +732,7 @@ paths:
                   required: true
                   description: Update site version info.
                   schema:
-                        $ref: '#/definitions/NewVersionItem'
+                        $ref: '#/definitions/EditVersionItem'
             responses:
                 200:
                    description: Return updated site version info
@@ -949,12 +949,6 @@ definitions:
                 minLength: 1
                 maxLength: 255
 
-            #new_version:
-            #    description: New version info
-            #    $ref: '#/definitions/NewVersionItem'
-
-
-
     ChgPwd:
         type: object
         properties:
@@ -983,6 +977,46 @@ definitions:
                 minLength: 1
                 maxLength: 255
                 pattern: "^[a-zA-Z0-9_-]+$"
+    EditVersionItem:
+        type: object
+        required:
+            - description
+            - tag
+            - sitetype
+            - runtime
+            - root_dir
+        properties:
+            description:
+                type: string
+                description: Version name
+                example: "Version name"
+                minLength: 1
+                maxLength: 255
+            tag:
+                type: string
+                description: Version tag
+                example: "0.1.1"
+                minLength: 1
+                maxLength: 255
+            sitetype:
+                type: string
+                description: Site type
+                example: "wordpress-4.5"
+                minLength: 1
+                maxLength: 64
+            runtime:
+                type: string
+                description: Runtime/interpreter used in the site
+                example: "php56"
+                minLength: 1
+                maxLength: 64
+            root_dir:
+                type: string
+                description: Home directory served by the http server within the version directory. 
+                example: "/"
+                minLength: 1
+                maxLength: 255
+
     NewVersionItem:
         type: object
         required:
@@ -1177,6 +1211,12 @@ definitions:
                 example: "data/cit3gxhqh00007aruv60es3XX/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
                 minLength: 1
                 maxLength: 255
+            root_dir:
+                type: string
+                description: Home directory served by the http server within the version directory. 
+                example: "/"
+                minLength: 1
+                maxLength: 255
             sitetype:
                 type: string
                 description: Site type
@@ -1303,6 +1343,12 @@ definitions:
                 type: string
                 description: Directory root holding content of the site
                 example: "data/cit3gxhqh00007aruv60es3/content/cir22a51g0005mw45ay17gkeh/v/cir22a51g0005mw45ay17gasdasd"
+                minLength: 1
+                maxLength: 255
+            root_dir:
+                type: string
+                description: Home directory served by the http server within the version directory. 
+                example: "/"
                 minLength: 1
                 maxLength: 255
             domain:
