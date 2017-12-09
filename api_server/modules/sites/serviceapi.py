@@ -31,11 +31,9 @@ def httpserver_reload(servertype):
         return api_fail(DASPANEL_ERRORS, 'INVALIDAPIKEY', tenant)
     if (not CONFIG.pubsub.drivers.plugin_exist(CONFIG.pubsub.active)):
         return api_fail(DASPANEL_ERRORS, 'FSMISSINGDRIVER', CONFIG.pubsub.active)
-    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', password=tenant)
+    pubsub = CONFIG.pubsub.drivers.get_instance(CONFIG.pubsub.active, 'DasPubSub', **CONFIG.pubsub.cfg[CONFIG.pubsub.active])
     pubsub.publish('{0}:daspanel:sites'.format(tenant), 'daspanel.sites')
 
-    #driver =  xCONFIG.sites.drivers.get_instance(servertype, 'SitesConf', tenant=tenant, bucket=tenant)
-    #status, result = driver.reload()
     return NoContent, 204
 
 def httpserver_deactivate(cuid, servertype):
