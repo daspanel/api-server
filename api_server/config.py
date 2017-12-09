@@ -54,7 +54,7 @@ class ConfigSection(object):
 
 daspanel = ConfigSection("DASPANEL config")
 daspanel.hostname = os.getenv('DASPANEL_SYS_HOSTNAME', 'daspanel.site')
-daspanel.cfg_version = '0.1.6'
+daspanel.cfg_version = '0.1.7'
 daspanel.def_cfg = {}
 daspanel.def_cfg['sys'] = {}
 daspanel.def_cfg['sys']['hostname'] = daspanel.hostname
@@ -126,6 +126,9 @@ daspanel.def_cfg['engines'].extend([
 daspanel.def_cfg['filemanager'] = {}
 daspanel.def_cfg['filemanager']['user'] = daspanel.def_cfg['sys']['admin']
 daspanel.def_cfg['filemanager']['password'] = gen_pass()
+daspanel.def_cfg['console'] = {}
+daspanel.def_cfg['console']['user'] = daspanel.def_cfg['sys']['admin']
+daspanel.def_cfg['console']['password'] = gen_pass()
 
 # Tenant saved config
 daspanel.tenant_cfg = {}

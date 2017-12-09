@@ -77,6 +77,12 @@ def to_016(cfg_data):
 
     return tmp_data
 
+def to_017(cfg_data):
+    tmp_data = copy.deepcopy(cfg_data)
+    tmp_data["sys"]["config_version"] = "0.1.7"
+    return tmp_data
+
+
 class TinyDbMigrate(object):
 
     def __init__(self, from_version='0.1.0', to_version='0.1.0', cfg_data={}):
@@ -91,6 +97,7 @@ class TinyDbMigrate(object):
         self.steps['0.1.4'] = to_014
         self.steps['0.1.5'] = to_015
         self.steps['0.1.6'] = to_016
+        self.steps['0.1.7'] = to_017
         self.steps_done = collections.OrderedDict()
 
     def migrate(self):
